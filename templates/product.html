@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-3">
+    
+        <div class="card" style="padding:24px">
+            <div class="card-header">
+                <h2>Add Product</h2>
+            </div>
+            <div class="card-body">
+                <form action="/products" method="POST">
+                    <div class="form-group">
+                        <label for="name">Product Name</label>
+                        <input type="text" name="name" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mrp">MRP</label>
+                        <input type="number" name="mrp" class="form-control">
+                    
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" name="description" class="form-control">
+                
+                    </div>
+
+                    <div class="form-group">
+                        <label for="type">Product Type</label>
+
+                        <select name="type" id="type" class="form-control">
+                                <option value="books">Books</option>
+                            
+                                <option value="trainingkit">Training Kit</option>
+                            
+                                 <option value="caps">Caps</option>
+                                <option value="other">Other</option>
+                                <option value="books">Books</option>
+                            </select>
+                    </div>
+                   
+                   
+                
+                    <input type="submit" value="Add" class="btn btn-fill btn-danger"> 
+                
+                    
+                
+                    
+                
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card" style="padding:24px">
+            <div class="card-header">
+                <h4>Products</h4>
+            </div>
+
+            <div class="card-body table-full-width table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                Product Name
+                            </th>
+
+                            <th>
+                                MRP(INR)
+                            </th>
+
+                            <th>
+                                Description
+                            </th>
+                            <th>
+                                Prouct Type
+                            </th>
+                            <th>
+                                Date Added
+                            </th>
+
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                            {% for product in products%}
+                            <tr>
+                                <th>{{product.name}}</th>
+                                <th>{{product.mrp}}</th>
+                                <th>{{product.description}}</th>
+                                <th>{{product.type}}</th>
+                                <th>{{product.dateadded.split(" ")[0]}}</th>
+                            </tr>
+                            {%endfor%}
+                    </tbody>
+                </table>
+            </div>
+            
+            
+        
+        </div>
+    </div>
+    
+</div>
+
+{% endblock %}
+
+
