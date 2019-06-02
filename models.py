@@ -1,10 +1,9 @@
 # from app import db
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
+from app import db
 
 
 
-
-db=SQLAlchemy()
 
 class Product(db.Model):
     id= db.Column(db.Integer, primary_key=True, autoincrement=True)

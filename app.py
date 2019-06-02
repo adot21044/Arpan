@@ -3,18 +3,24 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
 import sqlite3
-from models import Product, db, Inventory
+import config
 import datetime
 project_dir=os.path.dirname(os.path.abspath(__file__))
 database_file="sqlite:///{}".format(os.path.join(project_dir,"arpandatabase.db"))
 
 
 app= Flask(__name__, static_url_path="/static")
-app.config["SQLALCHEMY_DATABASE_URI"]= database_file
+app.config.from_object(config.Config)
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db=SQLAlchemy(app)
+# app.config["SQLALCHEMY_DATABASE_URI"]= database_file
 
-with app.app_context():
-    db.init_app(app)
+# with app.app_context():
+#     db.init_app(app)
 
+
+
+from models import Product, Inventory
 @app.route("/")
 def home():
     db.create_all()
@@ -45,6 +51,8 @@ def product():
 
 
     return render_template("product.html", products=products)
+
+
 
 
 if __name__=="__main__":
