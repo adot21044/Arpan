@@ -3,16 +3,17 @@
 {% block content %}
 
 <div class="row">
+        <h2 style="margin-left: 12px">Inventory Management</h2>
     <div class="col-md-3">
     
         <div class="card" style="padding:24px">
             <div class="card-header">
-                <h2>Inventory</h2>
+                <h4>Add new product</h4>
             </div>
             <div class="card-body">
                 <form action="/inventory" method="POST">
                     <div class="form-group">
-                        <label for="name">Product</label>
+                        <label for="name">Existing Product</label>
                         
                         <select name="product" id="product" class="form-control">
                                 {%for product in products %}
@@ -57,11 +58,11 @@
                 </form>
             </div>
         </div>
-    </div>
+    
     
     <div class="col-md-8">
         <div class="card" style="padding:24px">
-                <div class="card" style="padding:24px">
+                <div >
                         <div class="card-header">
                             <h4>Products</h4>
                         </div>
