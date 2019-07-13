@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+    
+        <div class="card" style="padding:24px">
+            <div class="card-header">
+                <h2>Quarterly Requests</h2>
+            </div>
+            <div class="card-body">
+                <form action="/vendors" method="POST">
+                    <div class="form-group">
+                        <label for="Name">Product</label>
+                        <select name="product" id="product" class="form-control">
+                                {%for product in products %}
+                                <option value="{{product.id}}">{{product.name}}</option>
+                                {%endfor%}
+                            </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="quantity">Quantity</label>
+                        <input type="number" name="quantity" class="form-control">
+                    
+                    </div>
+                    <div class="form-group">
+                        <label for="team">Team</label>
+                        <input type="text" name="team" class="form-control">
+
+                
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date"name="date" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status">Request Status</label>
+
+                        <select name="status" id="status" class="form-control">
+                            <option value="pending">Request Pending</option>
+                            <option value="fulfilled">Request Fulfilled</option>
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+                            <label for="contact_person">Contact Person</label>
+                            <input type="text"name="contact_person" class="form-control">
+    
+                    </div>
+                    
+                        <div class="form-group">
+                                <label for="contact_number">Contact Number</label>
+                                <input type="number"name="contact_number" class="form-control">
+        
+                        </div>
+
+                    <div class="form-group">
+                        <label for="organisation">Orgnisation</label>
+                        <input type="text" name="organisation" class="form-control">
+
+                    </div>
+                
+                    <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" name="city" class="form-control">
+    
+                    </div>
+
+                    <div class="form-group">
+                            <label for="state">State</label>
+                            <input type="text" name="state" class="form-control">
+    
+                    </div>
+
+                   
+                   
+                
+                    <input type="submit" value="Add" class="btn btn-fill btn-danger"> 
+                
+                    
+                
+                    
+                
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+<div class="col-md-8">
+    <div class="card" style="padding:24px">
+        <div class="card-header">
+            <h4>Product Requests</h4>
+        </div>
+
+        <div class="card-body table-full-width table-responsive">
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            Product
+                        </th>
+
+                        <th>
+                            Quantity
+                        </th>
+
+                        <th>
+                            Team
+                        </th>
+                        <th>
+                            Date
+                        </th>
+                        <th>
+                            Request Status
+                        </th>
+                        <th>
+                            Contact Person
+                        </th>
+                        <th>
+                            Organisation
+                        </th>
+                        <th>
+                            City
+                        </th>
+                        <th>
+                            State
+                        </th>
+                       
+
+                    </tr>
+                </thead>
+                
+                <tbody>
+                        {% for vendor in vendors%}
+                        <tr>
+                            <th>{{product_request.product}}</th>
+                            <th>{{product_request.quantity}}</th>
+                            <th>{{product_request.team}}</th>
+                            <th>{{product_request.contact_person}}</th>
+                            <th>{{product_request.contact_number}}</th>
+                            <th>{{product_request.organisation}}</th>
+                            <th>{{product_request.city}}</th>
+                            <th>{{product_request.state}}</th>
+                        </tr>
+                        {%endfor%}
+                </tbody>
+            </table>
+        </div>
+        
+        
+    
+    </div>
+</div>
+
+</div>
+
+{% endblock %}
+
+

@@ -10,10 +10,42 @@
                 <h2>Add Product</h2>
             </div>
             <div class="card-body">
-                <form action="/products" method="POST">
+                <form action="/products" method="POST" enctype=multipart/form-data>
                     <div class="form-group">
                         <label for="name">Product Name</label>
+                        
                         <input type="text" name="name" class="form-control">
+                        <!-- <select name="name" id="name" class="form-control">
+               
+                             <option value="caregiversbooklet">Caregivers Booklet</option>
+                            <option value="mysafetybodybook">My Safety Body Book</option>
+                            <option value="personalsafetybook">My Personal Safety Book</option>
+                            <option value="faqbook">FAQ Book</option>
+                            <option value="handlingdisclosure">Handling Disclosure</option>
+                            <option value="memanual">M&E Manual</option>
+                            <option value="rescueandremadybook">Rescue and Remedy Book</option>
+                            <option value="tshirt">Arpan T-Shirts</option>
+                            <option value="mug">Arpan Mug</option>
+                            <option value="keychain">Arpan Keychains</option>
+                            <option value="sticker">Stickers</option>
+                            <option value="letterhead">Letterhead</option>
+                            <option value="smallenvelope">Envelope(Small)</option>
+                            <option value="bigenvelope">Envelope Big(A4 Size)</option>
+                            <option value="touchingsheet">Touching Sheet</option>
+                            <option value="parentingdigital">Parenting Poster Digital</option>
+                            <option value="childrendigital">Children Poster Digital</option>
+                            <option value="dvd">Arpan DVD</option>
+                            <option value="newbrochureenglish">New Brochure English</option>
+                            <option value="psemodule">PSE Module</option>
+                            <option value="pbpcharts">PBP Charts</option>
+                            <option value="emoticons">Emoticans</option>
+                            <option value="greceiptbook">80G Receipt Book</option>
+                            <option value="voucherbook">Voucher Book</option>
+                            <option value="worksheet">Worksheet</option>
+                            <option value="flyer">Flyers</option>
+                            <option value="flashcards">Flashcards</option>
+                            
+                        </select> -->
                     </div>
                     
                     <div class="form-group">
@@ -28,18 +60,37 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="type">Product Type</label>
-
-                        <select name="type" id="type" class="form-control">
-                                <option value="books">Books</option>
-                            
-                                <option value="trainingkit">Training Kit</option>
-                            
-                                 <option value="caps">Caps</option>
-                                <option value="other">Other</option>
-                                <option value="books">Books</option>
+                            <label for="vendor">Vendor</label>
+                            <select name="vendor" id="vendor" class="form-control">
+                                   {% for vendor in vendors%}
+                                   <option value="{{vendor.id}}">{{vendor.name}}</option>
+                                   {%endfor%}
                             </select>
+                       </div>
+
+                    <div class="form-group">
+                        <label for="type"> Product Type</label>
+                        <select name="type" id="type" class="form-control">
+                            <option value="trainingkitbig">Box Training Kit</option>
+                            <option value="folderkit">Folder Training Kit</option>
+                            <option value="product">Product</option>
+                        </select>
+
+                        
                     </div>
+
+                    <div class="form-group">
+                        <label for="language">Language</label>
+                        <select name="language" id="language" class="form-control">
+                            <option value="english">English</option>
+                            <option value="hindi">Hindi</option>
+                            <option value="marathi">Marathi</option>
+                            <option value="urdu">Urdu</option>
+                        </select>
+
+                    </div>
+
+                    <input type="file" name="file_url" class="form-control"> 
                    
                    
                 
@@ -76,7 +127,7 @@
                                 Description
                             </th>
                             <th>
-                                Prouct Type
+                                Product Type
                             </th>
                             <th>
                                 Date Added
@@ -88,7 +139,7 @@
                     <tbody>
                             {% for product in products%}
                             <tr>
-                                <th>{{product.name}}</th>
+                                <th>{{product.name}}- {{product.language}}</th>
                                 <th>{{product.mrp}}</th>
                                 <th>{{product.description}}</th>
                                 <th>{{product.type}}</th>

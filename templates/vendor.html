@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+    
+        <div class="card" style="padding:24px">
+            <div class="card-header">
+                <h2>Add Vendor</h2>
+            </div>
+            <div class="card-body">
+                <form action="/vendors" method="POST">
+                    <div class="form-group">
+                        <label for="Name">Name</label>
+                        <input type="text" name="Name" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="City_of_Operations">City of Operation</label>
+                        <input type="text" name="Password" class="form-control">
+                    
+                    </div>
+                    <div class="form-group">
+                        <label for="gst">GST</label>
+                        <input type="number" name="gst" class="form-control">
+
+                
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact_person">Contact Person</label>
+                        <input type="text"name="contact_person" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact_number">Contact Number</label>
+                        <input type="number"name="contact_number" class="form-control">
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="remarks">Remarks</label>
+                        <input type="text"name="remarks" class="form-control">
+                    </div>
+                   
+                   
+                
+                    <input type="submit" value="Add" class="btn btn-fill btn-danger"> 
+                
+                    
+                
+                    
+                
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+<div class="col-md-8">
+    <div class="card" style="padding:24px">
+        <div class="card-header">
+            <h4>Vendors</h4>
+        </div>
+
+        <div class="card-body table-full-width table-responsive">
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            Name
+                        </th>
+
+                        <th>
+                            City
+                        </th>
+
+                        <th>
+                            GST
+                        </th>
+                        <th>
+                            Contact Person
+                        </th>
+                        <th>
+                            Contact Number
+                        </th>
+                        <th>
+                            Remarks
+                        </th>
+                       
+
+                    </tr>
+                </thead>
+                
+                <tbody>
+                        {% for vendor in vendors%}
+                        <tr>
+                            <th>{{vendor.name}}</th>
+                            <th>{{vendor.city}}</th>
+                            <th>{{vendor.gst}}</th>
+                            <th>{{vendor.contact_person}}</th>
+                            <th>{{vendor.contact_number}}</th>
+                            <th>{{vendor.remarks}}</th>
+                        </tr>
+                        {%endfor%}
+                </tbody>
+            </table>
+        </div>
+        
+        
+    
+    </div>
+</div>
+
+</div>
+
+{% endblock %}
+
+

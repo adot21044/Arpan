@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="row">
-        <h2 style="margin-left: 12px">Inventory</h2>
+        <h2 style="margin-left: 12px">Purchase Order</h2>
     <div class="col-md-3">
     
         <div class="card" style="padding:24px">
@@ -11,7 +11,7 @@
                 <h4>Purchase Order</h4>
             </div>
             <div class="card-body">
-                <form action="/inventory" method="POST">
+                <form action="/purchase-orders" method="POST">
                     <div class="form-group">
                         <label for="name">Existing Product</label>
                         
@@ -48,6 +48,15 @@
                             <label for="price">Price(INR)</label>
                             <input type="number" name="price" class="form-control">
                          </div>
+
+                         <div class="form-group">
+                                <label for="vendor">Vendor</label>
+                                <select name="vendor" id="vendor" class="form-control">
+                                       {% for vendor in vendors%}
+                                       <option value="{{vendor.id}}">{{vendor.name}}</option>
+                                       {%endfor%}
+                                </select>
+                           </div>
                         
                          <div class="form-group">
                              <label for="remark">Remarks</label>
@@ -95,7 +104,7 @@
         <div class="card" style="padding:24px">
                 <div >
                         <div class="card-header">
-                            <h4>Products</h4>
+                            <h4>Orders list</h4>
                         </div>
             
                         <div class="card-body table-full-width table-responsive">

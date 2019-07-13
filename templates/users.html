@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+    
+        <div class="card" style="padding:24px">
+            <div class="card-header">
+                <h2>Add User</h2>
+            </div>
+            <div class="card-body">
+                <form action="/users" method="POST">
+                    <div class="form-group">
+                        <label for="Email">Email</label>
+                        <input type="text" name="Email" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="Password">Password</label>
+                        <input type="text" name="Password" class="form-control">
+                    
+                    </div>
+                    <div class="form-group">
+                        <label for="Role">Role</label>
+                        <select name="Role" id="type" class="form-control">
+                            <option value="admin">Admin</option>
+                        
+                            <option value="team_manager">Team Manager</option>
+                        
+                             
+                        </select>
+
+                
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact_number">Contact Number</label>
+                        <input type="number"name="contact_number" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="team">Team</label>
+
+                        <select name="team" id="type" class="form-control">
+                                <option value="pse">PSE Team</option>
+                            
+                                <option value="training_team">Training team</option>
+                            
+                                 <option value="public_engagement">Public Engagement Team</option>
+                                <option value="other">Other</option>
+                                
+                            </select>
+                    </div>
+                   
+                   
+                
+                    <input type="submit" value="Add" class="btn btn-fill btn-danger"> 
+                
+                    
+                
+                    
+                
+                </form>
+            </div>
+        </div>
+    </div>
+<div class="col-md-8">
+    <div class="card" style="padding:24px">
+        <div class="card-header">
+            <h4>Users</h4>
+        </div>
+
+        <div class="card-body table-full-width table-responsive">
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Password
+                        </th>
+
+                        <th>
+                            Role
+                        </th>
+                        <th>
+                            Contact Number
+                        </th>
+                       
+
+                    </tr>
+                </thead>
+                
+                <tbody>
+                        {% for user in users%}
+                        <tr>
+                            <th>{{user.email}}</th>
+                            <th>{{user.password}}</th>
+                            <th>{{user.role}}</th>
+                            <th>{{user.contact_number}}</th>
+                        </tr>
+                        {%endfor%}
+                </tbody>
+            </table>
+        </div>
+        
+        
+    
+    </div>
+</div>
+
+</div>
+
+{% endblock %}
+
+
