@@ -4,26 +4,29 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import config
 import datetime
-from flask_login import LoginManager, current_user, login_user
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(APP_ROOT, 'Media')
-print(UPLOAD_FOLDER)
+
 app = Flask(__name__, static_url_path="/static")
 app.config.from_object(config.Config)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
 login_manager=LoginManager(app)
+login_manager.init_app(app)
 # model imports here
 from models import *
 
 
 @login_manager.user_loader 
-def load_user(id):
-    return User.query.get(int(id))
+def load_user(email):
+    print(id)
+    print(User.get(id))
+    return User.get(email)
 
 
 @app.route("/")
@@ -100,10 +103,16 @@ def login():
         if user is None or not user.check_password(data.get("Password")):
             print("User not present or wrong password")
             return redirect(url_for("login"))
-        # login_user(user)
+        # login_user(user) # TODO
         return redirect(url_for("home"))
     #form=Loginform()
     return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect("/login")
+
 
 @app.route("/product-requests", methods=["GET", "POST"])
 def product_request():

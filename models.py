@@ -42,7 +42,7 @@ class User(UserMixin,db.Model):
     id= db.Column(db.Integer, primary_key=True, autoincrement=True)
     email=db.Column(db.String(100), nullable=False)
     role=db.Column(db.String(100), nullable=False)
-    contact_number=db.Column(db.String, nullable=False)
+    contact_number=db.Column(db.String(12), nullable=False)
     team=db.Column(db.String(100), nullable=False)
     password_hash=db.Column(db.String(128))
     def set_password(self, password):

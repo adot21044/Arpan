@@ -112,18 +112,33 @@
                                 <thead>
                                     <tr>
                                         <th>
-                                            Product Name
+                                            Existing Product
+                                        </th>
+            
+                                        <th>
+                                            Version
                                         </th>
             
                                         <th>
                                             Quantity
                                         </th>
-            
                                         <th>
                                             Price
                                         </th>
+
                                         <th>
-                                            Description
+                                            Vendor
+                                        </th>
+
+                                        <th>
+                                            Remarks
+                                        </th>
+
+                                        <th>
+                                            Date Placed
+                                        </th>
+                                        <th>
+                                            Status
                                         </th>
                                        
             
@@ -133,10 +148,14 @@
                                 <tbody>
                                         {% for product in stock%}
                                         <tr>
-                                            <th>{{product.product.name}}</th>
-                                            <th>{{product.quantity}}</th>
-                                            <th>{{product.price}}</th>
-                                            <th>{{product.description}}</th>
+                                            <th>{{purchaseorder.product.name}}</th>
+                                            <th>{{purchaseorder.version}}</th>
+                                            <th>{{purchaseorder.quantity}}</th>
+                                            <th>{{purchaseorder.price}}</th>
+                                            <th>{{purchaseorder.vendor}}</th>
+                                            <th>{{purchaseorder.remark}}</th>
+                                            <th>{{purchaseorder.dateplaced}}</th>
+                                            <th>{{purchaseorder.status}}</th>
                                         </tr>
                                         {%endfor%}
                                 </tbody>
