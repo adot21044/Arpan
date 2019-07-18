@@ -6,6 +6,7 @@ import config
 import datetime
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from werkzeug.utils import secure_filename
+from flask_migrate import Migrate, MigrateCommand
 
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -16,6 +17,7 @@ app.config.from_object(config.Config)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 login_manager=LoginManager(app)
 login_manager.init_app(app)
 # model imports here
@@ -63,8 +65,9 @@ def product():
         db.session.add(product)
         db.session.commit()
     products = Product.query.all()
+    vendors = Vendor.query.all()
 
-    return render_template("product.html", products=products)
+    return render_template("product.html", products=products, vendors=vendors)
 
 
 @app.route("/users", methods=["GET", "POST"])
@@ -86,8 +89,8 @@ def users():
 def vendor():
     if request.form:
         data=request.form
-        vendor= Vendor(name=data.get("Name"), city=data.get("City_of_Operations"), GST=data.get("gst"), contact_person=data.get
-         ("contact_person"), contact_number=data.get("contact_number"), remarks=data.get("remarks"))
+        vendor= Vendor(name=data.get("Name"), city=data.get("city"), GST=data.get("gst"), contact_person=data.get
+         ("contact_person"), contact_number=str(data.get("contact_number")), remarks=data.get("remarks"))
         db.session.add(vendor)
         db.session.commit()
     vendors= Vendor.query.all()
@@ -129,15 +132,18 @@ def product_request():
 @app.route("/purchase-orders", methods=["GET", "POST"])
 def purchase_orders():
     if request.form:
-        print(request.form)
+
         data = request.form
-        purchase_orders=PurchaseOrders(product_id=data.get("product"), price=data.get("price"), quantity=data.get(
-            "quantity"), description=data.get("description"), date=str(datetime.datetime.now()))
+        purchase_orders=PurchaseOrders(product_id=data.get("product"), price=data.get("price"), vendor=data.get("vendor"),quantity=data.get(
+            "quantity"), remarks=data.get("remarks"), date_added=str(datetime.datetime.now()),date_modified=str(datetime.datetime.now()), status=data.get("status"))
         db.session.add(purchase_orders)
         db.session.commit()
     stock = PurchaseOrders.query.all()
+    products = Product.query.all()
+    vendors= Vendor.query.all()
+
     
-    return render_template("purchaseorder.html", stock=stock)
+    return render_template("purchaseorder.html", stock=stock, products=products, vendors=vendors)
     
 if __name__ == "__main__":
     app.run(debug=True)

@@ -59,8 +59,8 @@
                            </div>
                         
                          <div class="form-group">
-                             <label for="remark">Remarks</label>
-                            <input type="text" name="remark" class="form-control">
+                             <label for="remarks">Remarks</label>
+                            <input type="text" name="remarks" class="form-control">
                         
 
                          </div>
@@ -76,7 +76,10 @@
 
                         <div class="form-group">
                             <label for="status">Status</label>
-                            <input type="checkbox" class="form-control"> 
+                            <select name="status" class="form-control">
+                                <option value="accepted">Accepted</option>
+                                <option value="declined">Declined</option>
+                            </select>
 
                         </div>
 
@@ -146,16 +149,16 @@
                                 </thead>
                                 
                                 <tbody>
-                                        {% for product in stock%}
+                                        {% for order in stock%}
                                         <tr>
-                                            <th>{{purchaseorder.product.name}}</th>
-                                            <th>{{purchaseorder.version}}</th>
-                                            <th>{{purchaseorder.quantity}}</th>
-                                            <th>{{purchaseorder.price}}</th>
-                                            <th>{{purchaseorder.vendor}}</th>
-                                            <th>{{purchaseorder.remark}}</th>
-                                            <th>{{purchaseorder.dateplaced}}</th>
-                                            <th>{{purchaseorder.status}}</th>
+                                            <th>{{order.product_id}}</th>
+                                            <th>{{order.version}}</th>
+                                            <th>{{order.quantity}}</th>
+                                            <th>{{order.price}}</th>
+                                            <th>{{order.vendor}}</th>
+                                            <th>{{order.remark}}</th>
+                                            <th>{{order.date_added}}</th>
+                                            <th>{{order.status}}</th>
                                         </tr>
                                         {%endfor%}
                                 </tbody>

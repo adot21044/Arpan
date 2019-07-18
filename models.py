@@ -56,9 +56,9 @@ class Vendor(db.Model):
     id= db.Column(db.Integer, primary_key=True, autoincrement=True)
     name= db.Column(db.String(50), nullable=False)
     city= db.Column(db.String(20), nullable=False)
-    GST= db.Column(db.Integer, nullable=False)
+    GST= db.Column(db.Integer, nullable=False) # TODO ask if this is correct
     contact_person= db.Column(db.String(100), nullable=False)
-    contact_number= db.Column(db.String, nullable=False)
+    contact_number= db.Column(db.String(12), nullable=True)
     remarks= db.Column(db.String(200), nullable=True)
 
 class ProductRequest(db.Model):
@@ -85,3 +85,5 @@ class PurchaseOrders(db.Model):
     remarks= db.Column(db.String(200), nullable=True)
     date_added= db.Column(db.String(30), nullable=False)
     date_modified= db.Column(db.String(30), nullable=False)
+    status=db.Column(db.String(30), nullable=False)
+    #TODO version
