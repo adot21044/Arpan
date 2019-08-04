@@ -14,8 +14,8 @@
                         <div class="card">
 
                             <div class="header">
-                                <h4 class="title">Email Statistics</h4>
-                                <p class="category">Last Campaign Performance</p>
+                                <h4 class="title">Request Statistics</h4>
+                                <p class="category">Number of requests made by teams</p>
                             </div>
                             <div class="content">
                                 <div id="chartPreferences" class="ct-chart ct-perfect-fourth"></div>
@@ -26,10 +26,10 @@
                                         <i class="fa fa-circle text-danger"></i> Bounce
                                         <i class="fa fa-circle text-warning"></i> Unsubscribe
                                     </div>
-                                    <hr>
-                                    <div class="stats">
+                                    <!-- <hr> -->
+                                    <!-- <div class="stats">
                                         <i class="fa fa-clock-o"></i> Campaign sent 2 days ago
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -213,6 +213,22 @@
                     </div>
                 </div>
             </div>
+            <script type="text/javascript">
+                $(document).ready(function(){
+        
+                    demo.initChartist();
+        
+                    // $.notify({
+                    // 	icon: 'pe-7s-gift',
+                    // 	message: "Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for every web developer."
+        
+                    // },{
+                    //     type: 'info',
+                    //     timer: 4000
+                    // });
+        
+                });
+            </script>
             {% endblock %}
 
 

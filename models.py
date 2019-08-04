@@ -22,19 +22,26 @@ class Product(db.Model):
     stock=db.relationship("Inventory", backref="product", lazy=True)
     language = db.Column(db.String(100), nullable=True, default="English")
     file_url = db.Column(db.String(255), nullable=True)
+    version=db.Column(db.String(30), nullable=True)
+    vendor = db.Column(db.Integer, db.ForeignKey("vendors.id"), nullable=True)
+
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
+        return '<name {}>'.format(self.name)
 
 class Inventory(db.Model):
     
     __tablename__="inventories"
     product_id= db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
+    master_product= db.relationship("Product", foreign_keys=product_id)
     quantity= db.Column(db.Integer)
     id= db.Column(db.Integer, primary_key=True, autoincrement=True)
     description= db.Column(db.String(255), nullable=True)
     date= db.Column(db.String(30), nullable=False)
     price= db.Column(db.Integer, nullable=False)
+    vendor = db.Column(db.Integer, db.ForeignKey("vendors.id"), nullable=True)
+    master_vendor= db.relationship("Vendor", foreign_keys=vendor)
+
 
 class User(UserMixin,db.Model):
 
@@ -65,13 +72,18 @@ class ProductRequest(db.Model):
     __tablename__="product_request"
     id= db.Column(db.Integer, primary_key=True, autoincrement=True)
     product_id= db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
+    master_product= db.relationship("Product", foreign_keys=product_id)
     quantity= db.Column(db.Integer, nullable=False)
     user_id= db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user= db.relationship("User", foreign_keys=user_id)
+    # master_vendor= db.relationship("Vendor", foreign_keys=product_id)
     date= db.Column(db.String(30), nullable=False)
-    status= db.Column(db.String(30), nullable=True)
-    organisation= db.Column(db.String(100), nullable=False)
-    city= db.Column(db.String(50), nullable=False)
+    status= db.Column(db.String(30), nullable=False)
+    organisation= db.Column(db.String(100), nullable=True)
+    city= db.Column(db.String(50), nullable=True)
     state= db.Column(db.String(50), nullable=True)
+    team=db.Column(db.String(100), nullable=True)
+
 
 
 class PurchaseOrders(db.Model):
@@ -79,11 +91,12 @@ class PurchaseOrders(db.Model):
     __tablename__="purchase_orders"
     id= db.Column(db.Integer, primary_key=True, autoincrement=True)
     product_id= db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
+    master_product= db.relationship("Product", foreign_keys=product_id)
     quantity= db.Column(db.Integer)
-    price= db.Column(db.Integer, nullable=False)
+    price= db.Column(db.Integer, nullable=False)    
     vendor= db.Column(db.Integer, db.ForeignKey("vendors.id"), nullable=False)
+    master_vendor= db.relationship("Vendor", foreign_keys=vendor)
     remarks= db.Column(db.String(200), nullable=True)
     date_added= db.Column(db.String(30), nullable=False)
     date_modified= db.Column(db.String(30), nullable=False)
     status=db.Column(db.String(30), nullable=False)
-    #TODO version

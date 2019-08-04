@@ -2,95 +2,78 @@
 
 {% block content %}
 
-<div class="row">
-        <h2 style="margin-left: 12px">Inventory</h2>
-    <div class="col-md-3">
-    
-        <div class="card" style="padding:24px">
-            <div class="card-header">
-                <h4>Purchase Order</h4>
-            </div>
-            <div class="card-body">
-                <form action="/inventory" method="POST">
-                    <div class="form-group">
-                        <label for="name">Existing Product</label>
-                        
-                        <select name="product" id="product" class="form-control">
-                                {%for product in products %}
-                                <option value="{{product.id}}">{{product.name}}</option>
-                                {%endfor%}
-                            </select>
-
-
-
+<div class="col-md-8">
+    <div class="card" style="padding:24px">
+            <div >
+                    <div class="card-header">
+                        <h4>Orders list</h4>
                     </div>
+        
+                    <div class="card-body table-full-width table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Existing Product
+                                    </th>
+        
+                                    <th>
+                                        Version
+                                    </th>
+        
+                                    <th>
+                                        Quantity
+                                    </th>
+                                    <th>
+                                        Price
+                                    </th>
 
-                    <div class="form-group">
-                            <label for="name">Version</label>
-                            <input type="checkbox" name="version" class="form-control">
-                            <select name="version" id="version" class="form-control">
-                                <option value="1">Version 1</option>
-                                <option value="2">Version 2</option>
-                                <option value="3">Version 3</option>
-                                
+                                    <th>
+                                        Vendor
+                                    </th>
 
-                            </select>
-    
-                        </div>
+                                    <th>
+                                        Remarks
+                                    </th>
 
-                    <div class="form-group">
-                            <label for="quantity">Quantity</label>
-                            <input type="number" name="quantity" class="form-control">
-                        
-                        </div>
-
-                        <div class="form-group">
-                            <label for="price">Price(INR)</label>
-                            <input type="number" name="price" class="form-control">
-                         </div>
-                        
-                         <div class="form-group">
-                             <label for="remark">Remarks</label>
-                            <input type="text" name="remark" class="form-control">
-                        
-
-                         </div>
-
-                         
-
-                        <div class="form-group">
-                            <label for="dateplaced">Date Placed</label>
-                            <input type="date" name="dateplaced" class="form-control">
-                    
-
-                        </div>
-
-                        <div class="form-group">
-                            <label for="status">Status</label>
-                            <input type="checkbox" class="form-control"> 
-
-                        </div>
-
-                         
-                      
-
-                         <input type="submit" value="Add" class="btn btn-fill btn-danger"> 
-
+                                    <th>
+                                        Date Placed
+                                    </th>
+                                    <th>
+                                        Status
+                                    </th>
+                                   
+        
+                                </tr>
+                            </thead>
+                            
+                            <tbody>
+                                    {% for order in stock%}
+                                    <tr>
+                                        <th>{{order.master_product.name}}-{{order.master_product.language}}</th>
+                                        <th>{{order.version}}</th>
+                                        <th>{{order.quantity}}</th>
+                                        <th>{{order.price}}</th>
+                                        <th>{{order.master_vendor.name}}</th>
+                                        <th>{{order.remark}}</th>
+                                        <th>{{order.date_added}}</th>
+                                        <th>{{order.status}}</th>
+                                    </tr>
+                                    {%endfor%}
+                            </tbody>
+                        </table>
                     </div>
                     
-                   
-                
-
-                   
                     
                 
-                    
-                
-                </form>
+                </div>
             </div>
-        </div>
-    
-    
+    </div>
+</div>
+
+</div>
+
+<!--     
     <div class="col-md-8">
         <div class="card" style="padding:24px">
                 <div >
@@ -141,5 +124,5 @@
         </div>
     </div>
     
-</div>
+</div> -->
 {% endblock %}

@@ -17,7 +17,7 @@
                         
                         <select name="product" id="product" class="form-control">
                                 {%for product in products %}
-                                <option value="{{product.id}}">{{product.name}}</option>
+                                <option value="{{product.id}}">{{product.name}}-{{product.language}}</option>
                                 {%endfor%}
                             </select>
 
@@ -25,18 +25,6 @@
 
                     </div>
 
-                    <div class="form-group">
-                            <label for="name">Version</label>
-                            <input type="checkbox" name="version" class="form-control">
-                            <select name="version" id="version" class="form-control">
-                                <option value="1">Version 1</option>
-                                <option value="2">Version 2</option>
-                                <option value="3">Version 3</option>
-                                
-
-                            </select>
-    
-                        </div>
 
                     <div class="form-group">
                             <label for="quantity">Quantity</label>
@@ -103,6 +91,7 @@
         </div>
     
     
+
     <div class="col-md-8">
         <div class="card" style="padding:24px">
                 <div >
@@ -151,11 +140,11 @@
                                 <tbody>
                                         {% for order in stock%}
                                         <tr>
-                                            <th>{{order.product_id}}</th>
+                                            <th>{{order.master_product.name}} - {{order.master_product.language}}</th>
                                             <th>{{order.version}}</th>
                                             <th>{{order.quantity}}</th>
                                             <th>{{order.price}}</th>
-                                            <th>{{order.vendor}}</th>
+                                            <th>{{order.master_vendor.name}}</th>
                                             <th>{{order.remark}}</th>
                                             <th>{{order.date_added}}</th>
                                             <th>{{order.status}}</th>
@@ -172,5 +161,5 @@
         </div>
     </div>
     
-</div>
+</div> -->
 {% endblock %}

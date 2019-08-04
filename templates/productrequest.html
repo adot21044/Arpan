@@ -9,12 +9,12 @@
                 <h2>Quarterly Requests</h2>
             </div>
             <div class="card-body">
-                <form action="/vendors" method="POST">
+                <form action="/product-requests" method="POST">
                     <div class="form-group">
                         <label for="Name">Product</label>
                         <select name="product" id="product" class="form-control">
                                 {%for product in products %}
-                                <option value="{{product.id}}">{{product.name}}</option>
+                                <option value="{{product.id}}">{{product.name}}-{{product.language}}</option>
                                 {%endfor%}
                             </select>
                     </div>
@@ -26,7 +26,11 @@
                     </div>
                     <div class="form-group">
                         <label for="team">Team</label>
-                        <input type="text" name="team" class="form-control">
+                        <select name="team" id="team" class="form-control">
+                            <option value="pse">PSE Team</option>
+                            <option value="pe">Public Engagement Team</option>
+                            <option value="training">Training Teams</option>
+                        </select>
 
                 
                     </div>
@@ -103,6 +107,7 @@
 
         <div class="card-body table-full-width table-responsive">
             <table class="table table-hover table-striped">
+                
                 <thead>
                     <tr>
                         <th>
@@ -134,22 +139,27 @@
                         <th>
                             State
                         </th>
+                        <th>
+                            Delete?
+                        </th>
                        
 
                     </tr>
                 </thead>
                 
                 <tbody>
-                        {% for vendor in vendors%}
+                        {% for product_request in product_requests%}
                         <tr>
-                            <th>{{product_request.product}}</th>
+                            <th>{{product_request.master_product.name}} - {{product_request.master_product.language}}</th>
                             <th>{{product_request.quantity}}</th>
                             <th>{{product_request.team}}</th>
+                            <th>{{product_request.master_vendor}}</th>
                             <th>{{product_request.contact_person}}</th>
                             <th>{{product_request.contact_number}}</th>
-                            <th>{{product_request.organisation}}</th>
+                            <th>{{product_request.organisation}}</th> 
                             <th>{{product_request.city}}</th>
                             <th>{{product_request.state}}</th>
+                            <th><a href="/delete-product-request/{{product_request.id}}" onclick="return confirm('Are you sure you want to delete?')">Delete</a></th>
                         </tr>
                         {%endfor%}
                 </tbody>

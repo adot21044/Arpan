@@ -60,6 +60,18 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="name">Version</label>
+                        <select name="version" id="version" class="form-control">
+                            <option value="1">Version 1</option>
+                            <option value="2">Version 2</option>
+                            <option value="3">Version 3</option>
+                            
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
                             <label for="vendor">Vendor</label>
                             <select name="vendor" id="vendor" class="form-control">
                                    {% for vendor in vendors%}
@@ -127,6 +139,13 @@
                                 Description
                             </th>
                             <th>
+                                Version
+                            </th>
+                            <th>
+                                Vendor
+                            </th>
+                            
+                            <th>
                                 Product Type
                             </th>
                             <th>
@@ -142,6 +161,8 @@
                                 <th>{{product.name}}- {{product.language}}</th>
                                 <th>{{product.mrp}}</th>
                                 <th>{{product.description}}</th>
+                                <th>{{product.version}}</th>
+                                <th>{{product.vendor}}</th>
                                 <th>{{product.type}}</th>
                                 <th>{{product.dateadded.split(" ")[0]}}</th>
                             </tr>

@@ -30,11 +30,32 @@
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
     <link href="static/css/pe-icon-7-stroke.css" rel="stylesheet" />
 
+    <!--   Core JS Files   -->
+    <script src="static/js/jquery.3.2.1.min.js" type="text/javascript"></script>
+	<script src="static/js/bootstrap.min.js" type="text/javascript"></script>
+
+	<!--  Charts Plugin -->
+	<script src="static/js/chartist.min.js"></script>
+
+    <!--  Notifications Plugin    -->
+    <script src="static/js/bootstrap-notify.js"></script>
+
+    <!--  Google Maps Plugin    -->
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+
+    <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
+	<script src="static/js/light-bootstrap-dashboard.js?v=1.4.0"></script>
+
+	<!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
+	<script src="static/js/demo.js"></script>
+
+	
+
 </head>
 <body>
 
 <div class="wrapper">
-    <div class="sidebar" data-color="purple" data-image="static/img/sidebar-5.jpg">
+    <div class="sidebar" data-color="red" data-image="static/img/sidebar-5.jpg">
 
     <!--
 
@@ -51,7 +72,7 @@
             </div>
 
             <ul class="nav">
-                <li class="active">
+                <li>
                     <a href="/">
                         <i class="pe-7s-graph"></i>
                         <p>Dashboard</p>
@@ -59,7 +80,7 @@
                 </li>
                 <li>
                     <a href="/products">
-                        <i class="pe-7s-box"></i>
+                        <i class="pe-7s-shopbag"></i>
                         <p>Products</p>
                     </a>
                 </li>
@@ -77,20 +98,20 @@
                 </li>
                 <li>
                     <a href="/users">
-                        <i class="pe-7s-user"></i>
+                        <i class="pe-7s-users"></i>
                         <p>Users</p>
                     </a>
                 </li>
                                <li>
                     <a href="/product-requests">
-                        <i class="pe-7s-request"></i>
+                        <i class="pe-7s-pen"></i>
                         <p>Product Requests</p>
                     </a>
                 </li>
 
                 <li>
                         <a href="/purchase-orders">
-                            <i class="pe-7s-request"></i>
+                            <i class="pe-7s-note"></i>
                             <p>Purchase Order</p>
                         </a>
                     </li>
@@ -230,41 +251,5 @@
 
 
 </body>
-
-    <!--   Core JS Files   -->
-    <script src="static/js/jquery.3.2.1.min.js" type="text/javascript"></script>
-	<script src="static/js/bootstrap.min.js" type="text/javascript"></script>
-
-	<!--  Charts Plugin -->
-	<script src="static/js/chartist.min.js"></script>
-
-    <!--  Notifications Plugin    -->
-    <script src="static/js/bootstrap-notify.js"></script>
-
-    <!--  Google Maps Plugin    -->
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
-
-    <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
-	<script src="static/js/light-bootstrap-dashboard.js?v=1.4.0"></script>
-
-	<!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
-	<script src="static/js/demo.js"></script>
-
-	<script type="text/javascript">
-    	$(document).ready(function(){
-
-        	demo.initChartist();
-
-        	// $.notify({
-            // 	icon: 'pe-7s-gift',
-            // 	message: "Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for every web developer."
-
-            // },{
-            //     type: 'info',
-            //     timer: 4000
-            // });
-
-    	});
-	</script>
 
 </html>

@@ -7,7 +7,7 @@ import datetime
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 from flask_migrate import Migrate, MigrateCommand
-
+from flask_mail import Mail, Message
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(APP_ROOT, 'Media')
@@ -16,7 +16,9 @@ app = Flask(__name__, static_url_path="/static")
 app.config.from_object(config.Config)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 db = SQLAlchemy(app)
+mail = Mail(app)
 migrate = Migrate(app, db)
 login_manager=LoginManager(app)
 login_manager.init_app(app)
@@ -30,12 +32,39 @@ def load_user(email):
     print(User.get(id))
     return User.get(email)
 
+LOW_STOCK_THRESHOLD = 100
+msg = Message("Dear Admin, Your stock is running low, Please restock soon", sender="adit.ganapathy@oberoi-is.net", 
+        recipients=["adit.ganapathy@outlook.com"])
 
 @app.route("/")
 def home():
-    return render_template("dashboard.html")
+   
+
+    request_count = ProductRequest.query.count()
+    print("All",request_count)
+    team_pse_request = ProductRequest.query.filter_by(team="pse") 
+    team_pse_count  = (team_pse_request.count())
+    team_pe_request = ProductRequest.query.filter_by(team="pe")
+    team_pe_count = (team_pe_request.count())
+    team_training_request = ProductRequest.query.filter_by(team="training")
+    team_training_count = (team_training_request.count())
+    requestdata=dict()
+    try:
+        requestdata["pse"]=round((team_pse_count/request_count)*100,0)
+        requestdata["pe"]=round((team_pe_count/request_count)*100,0)
+        requestdata["training"]=round((team_training_count/request_count)*100,0)
+        requestdata["others"]=round(((request_count-team_pse_count-team_pe_count-team_training_count)/request_count)*100,0)
+    except:
+        requestdata["pse"]=0
+        requestdata["pe"]=0
+        requestdata["training"]=0
+        requestdata["others"]=0   
+
+    
+    return render_template("dashboard.html", requestdata=requestdata)
 
 
+#TODO: SHow product name instead of product id
 @app.route("/inventory", methods=["GET", "POST"])
 def inventory():
     if request.form:
@@ -49,6 +78,7 @@ def inventory():
     products = Product.query.all()
     return render_template("inventory.html", stock=stock, products=products)
 
+    
 
 @app.route("/products", methods=["GET", "POST"])
 def product():
@@ -56,7 +86,8 @@ def product():
         print(request.form)
         data = request.form
         product = Product(name=data.get("name"), type=data.get("type"), mrp=data.get("mrp"), description=data.get(
-            "description"), dateadded=str(datetime.datetime.now()), dateupdated=str(datetime.datetime.now()), language=data.get("language"))
+            "description"), dateadded=str(datetime.datetime.now()), dateupdated=str(datetime.datetime.now()), language=data.get("language"), version
+                =data.get("version"))
         if 'file_url' in request.files:
             file_url = request.files['file_url']
             filename = secure_filename(file_url.filename)
@@ -121,13 +152,32 @@ def logout():
 def product_request():
     if request.form:
         data=request.form
-        product_request=ProductRequest(product_id=data.get("Product Name"), quantity=data.get("Quantity"), 
-        user_id=data.get("Team"), date=data.get("Date"), status=data.get("Status"), organisation=data.get("Organisation")
-            , city=data.get("City"), state=data.get("State"))
+        #TODO remove hardcoded user_id
+        product_request=ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"), 
+        user_id=2, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation")
+            , city=data.get("city"), state=data.get("state"), team=data.get("team"))
+    
+        if data.get("status") == "fulfilled":
+            inventory = Inventory.query.filter_by(product_id=data.get("product")).first()
+            if inventory is not None:
+                inventory.quantity = inventory.quantity - int(data.get("quantity"))
+                if inventory.quantity < LOW_STOCK_THRESHOLD:
+                    mail.send(msg)
+                    pass
+                db.session.add(inventory)
         db.session.add(product_request)
         db.session.commit()
-    product_request=ProductRequest.query.all()
-    return render_template("productrequest.html")
+    products = Product.query.all()
+    product_requests=ProductRequest.query.all()
+    return render_template("productrequest.html", products=products, product_requests=product_requests)
+
+@app.route("/delete-product-request/<request_id>")
+def delete_product_request(request_id):
+    productrequest=ProductRequest.query.filter_by(id=request_id).first()
+    db.session.delete(productrequest)
+    db.session.commit()
+    return redirect ("/product-requests")
+
 
 @app.route("/purchase-orders", methods=["GET", "POST"])
 def purchase_orders():
@@ -136,14 +186,25 @@ def purchase_orders():
         data = request.form
         purchase_orders=PurchaseOrders(product_id=data.get("product"), price=data.get("price"), vendor=data.get("vendor"),quantity=data.get(
             "quantity"), remarks=data.get("remarks"), date_added=str(datetime.datetime.now()),date_modified=str(datetime.datetime.now()), status=data.get("status"))
+        if data.get("status") == "accepted":
+            inventory = Inventory.query.filter_by(product_id=data.get("product"), vendor=data.get("vendor")).first()
+            if inventory is not None:
+                inventory.quantity = inventory.quantity + int(data.get("quantity"))
+            else:
+                inventory = Inventory(product_id=data.get("product"), price=data.get("price"), quantity=data.get("quantity"),date=str(datetime.datetime.now()),vendor=data.get("vendor"))
+            db.session.add(inventory)
         db.session.add(purchase_orders)
         db.session.commit()
-    stock = PurchaseOrders.query.all()
+    stock = PurchaseOrders.query.order_by(PurchaseOrders.date_added.desc())
     products = Product.query.all()
     vendors= Vendor.query.all()
 
     
     return render_template("purchaseorder.html", stock=stock, products=products, vendors=vendors)
+
+
+
+    
     
 if __name__ == "__main__":
     app.run(debug=True)
