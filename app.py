@@ -8,7 +8,7 @@ from flask_login import LoginManager, current_user, login_user, logout_user, log
 from werkzeug.utils import secure_filename
 from flask_migrate import Migrate, MigrateCommand
 from flask_mail import Mail, Message
-
+import json
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(APP_ROOT, 'Media')
 
@@ -36,6 +36,8 @@ LOW_STOCK_THRESHOLD = 100
 msg = Message("Dear Admin, Your stock is running low, Please restock soon", sender="adit.ganapathy@oberoi-is.net", 
         recipients=["adit.ganapathy@outlook.com"])
 
+
+
 @app.route("/")
 def home():
    
@@ -51,20 +53,26 @@ def home():
     requestdata=dict()
     try:
         requestdata["pse"]=round((team_pse_count/request_count)*100,0)
-        requestdata["pe"]=round((team_pe_count/request_count)*100,0)
-        requestdata["training"]=round((team_training_count/request_count)*100,0)
-        requestdata["others"]=round(((request_count-team_pse_count-team_pe_count-team_training_count)/request_count)*100,0)
     except:
         requestdata["pse"]=0
+    try:
+        requestdata["pe"]=round((team_pe_count/request_count)*100,0)
+    except:
         requestdata["pe"]=0
+    try:
+        requestdata["training"]=round((team_training_count/request_count)*100,0)
+    except:
         requestdata["training"]=0
+    try:
+        requestdata["others"]=round(((request_count-team_pse_count-team_pe_count-team_training_count)/request_count)*100,0)
+    except:
         requestdata["others"]=0   
-
-    
+    print(requestdata)
+    # product_count = product_request.master_product.name.query.count()
+    # print("All: ", product_count)
     return render_template("dashboard.html", requestdata=requestdata)
 
 
-#TODO: SHow product name instead of product id
 @app.route("/inventory", methods=["GET", "POST"])
 def inventory():
     if request.form:
@@ -74,9 +82,10 @@ def inventory():
             "quantity"), description=data.get("description"), date=str(datetime.datetime.now()))
         db.session.add(inventory)
         db.session.commit()
-    stock = Inventory.query.all()
+    stock = Inventory.query.order_by(Inventory.date.desc())
     products = Product.query.all()
     return render_template("inventory.html", stock=stock, products=products)
+
 
     
 
@@ -142,6 +151,7 @@ def login():
     #form=Loginform()
     return render_template("login.html")
 
+
 @app.route("/logout")
 def logout():
     logout_user()
@@ -150,30 +160,35 @@ def logout():
 
 @app.route("/product-requests", methods=["GET", "POST"])
 def product_request():
+    
     if request.form:
         data=request.form
         #TODO remove hardcoded user_id
         product_request=ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"), 
         user_id=2, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation")
-            , city=data.get("city"), state=data.get("state"), team=data.get("team"))
+            , city=data.get("city", ""), state=data.get("state"), team=data.get("team"))
     
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(product_id=data.get("product")).first()
             if inventory is not None:
                 inventory.quantity = inventory.quantity - int(data.get("quantity"))
                 if inventory.quantity < LOW_STOCK_THRESHOLD:
-                    mail.send(msg)
+                    # mail.send(msg) TODO
                     pass
                 db.session.add(inventory)
         db.session.add(product_request)
         db.session.commit()
     products = Product.query.all()
-    product_requests=ProductRequest.query.all()
+    product_requests=ProductRequest.query.order_by(ProductRequest.date.desc())
     return render_template("productrequest.html", products=products, product_requests=product_requests)
 
 @app.route("/delete-product-request/<request_id>")
 def delete_product_request(request_id):
     productrequest=ProductRequest.query.filter_by(id=request_id).first()
+    product_id=productrequest.product_id
+    if productrequest.status == "fulfilled":
+        inventory = Inventory.query.filter_by(product_id=product_id).first()
+        inventory.quantity = inventory.quantity + productrequest.quantity
     db.session.delete(productrequest)
     db.session.commit()
     return redirect ("/product-requests")
@@ -198,15 +213,26 @@ def purchase_orders():
     stock = PurchaseOrders.query.order_by(PurchaseOrders.date_added.desc())
     products = Product.query.all()
     vendors= Vendor.query.all()
-
-    
     return render_template("purchaseorder.html", stock=stock, products=products, vendors=vendors)
 
 
+@app.route("/delete-purchase-order/<request_id>")
+def delete_purchase_order(request_id):
+    purchase_orders=PurchaseOrders.query.filter_by(id=request_id).first()
+    product_id=purchase_orders.product_id
+    if purchase_orders.status == "accepted":
+        inventory = Inventory.query.filter_by(product_id=product_id).first()
+        inventory.quantity = inventory.quantity - purchase_orders.quantity
+    db.session.delete(purchase_orders)
+    db.session.commit()
+    return redirect ("/purchase-orders")
+
+    
+    
 
     
     
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True,host='0.0.0.0', port=80)
 
 

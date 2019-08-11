@@ -217,11 +217,13 @@ demo = {
 
         // Chartist.Pie(' #chartPreferences', dataPreferences, optionsPreferences);
         console.log(requestdata);
+        var jsonReqData = JSON.parse(requestdata);
         Chartist.Pie('#chartPreferences', {
-          labels: ["PSE: " +requestdata.pse+'%',"PE: " +requestdata.pe+'%',"Training: " +requestdata.training+'%', "Admin: " +requestdata.others+'%'],
-          series: [requestdata.pse, requestdata.pe, requestdata.training, requestdata.others]
+          labels: ["PSE: " +jsonReqData.pse+'%',"PE: " +jsonReqData.pe+'%',"Training: " +jsonReqData.training+'%', "Admin: " +jsonReqData.others+'%'],
+          series: [jsonReqData.pse, jsonReqData.pe, jsonReqData.training, jsonReqData.others]
         });
     },
+
 
     initGoogleMaps: function(){
         var myLatlng = new google.maps.LatLng(40.748817, -73.985428);

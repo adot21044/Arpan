@@ -148,6 +148,8 @@
                                             <th>{{order.remark}}</th>
                                             <th>{{order.date_added}}</th>
                                             <th>{{order.status}}</th>
+                                            <th><a href="/delete-purchase-order/{{order.id}}" onclick="return confirm('Are you sure you want to delete?')">Delete</a></th>
+
                                         </tr>
                                         {%endfor%}
                                 </tbody>

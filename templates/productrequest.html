@@ -153,13 +153,13 @@
                             <th>{{product_request.master_product.name}} - {{product_request.master_product.language}}</th>
                             <th>{{product_request.quantity}}</th>
                             <th>{{product_request.team}}</th>
-                            <th>{{product_request.master_vendor}}</th>
+                            <th>{{product_request.date}}</th>
+                            <th>{{product_request.status}}</th>
                             <th>{{product_request.contact_person}}</th>
-                            <th>{{product_request.contact_number}}</th>
                             <th>{{product_request.organisation}}</th> 
                             <th>{{product_request.city}}</th>
                             <th>{{product_request.state}}</th>
-                            <th><a href="/delete-product-request/{{product_request.id}}" onclick="return confirm('Are you sure you want to delete?')">Delete</a></th>
+                            <th><a href="/delete-product-request/{{product_request.id}}" onclick="return confirm('Are you sure you want to delete this order?')">Delete</a></th>
                         </tr>
                         {%endfor%}
                 </tbody>
