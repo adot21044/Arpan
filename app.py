@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, Response
 from flask_sqlalchemy import SQLAlchemy
 import os
 import config
@@ -9,6 +9,7 @@ from werkzeug.utils import secure_filename
 from flask_migrate import Migrate, MigrateCommand
 from flask_mail import Mail, Message
 import json
+import csv
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(APP_ROOT, 'Media')
 
@@ -27,21 +28,20 @@ from models import *
 
 
 @login_manager.user_loader 
-def load_user(email):
-    print(id)
-    print(User.get(id))
-    return User.get(email)
+def load_user(user_id):
+    return User.query.all(id=user_id).first
 
 LOW_STOCK_THRESHOLD = 100
 msg = Message("Dear Admin, Your stock is running low, Please restock soon", sender="adit.ganapathy@oberoi-is.net", 
         recipients=["adit.ganapathy@outlook.com"])
 
-
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    return redirect('/login?next=' + request.path)
 
 @app.route("/")
+@login_required
 def home():
-   
-
     request_count = ProductRequest.query.count()
     print("All",request_count)
     team_pse_request = ProductRequest.query.filter_by(team="pse") 
@@ -71,6 +71,12 @@ def home():
     # product_count = product_request.master_product.name.query.count()
     # print("All: ", product_count)
     return render_template("dashboard.html", requestdata=requestdata)
+
+@app.route("/team-home", methods=["GET", "POST"])
+def team_home():
+    return render_template("teamdashboard.html")
+
+
 
 
 @app.route("/inventory", methods=["GET", "POST"])
@@ -147,7 +153,10 @@ def login():
             print("User not present or wrong password")
             return redirect(url_for("login"))
         # login_user(user) # TODO
-        return redirect(url_for("home"))
+        if user.role == "admin":
+            return redirect(url_for("home"))
+        else: 
+            return redirect(url_for("team_home"))
     #form=Loginform()
     return render_template("login.html")
 
@@ -182,6 +191,33 @@ def product_request():
     product_requests=ProductRequest.query.order_by(ProductRequest.date.desc())
     return render_template("productrequest.html", products=products, product_requests=product_requests)
 
+
+@app.route("/team-product-requests", methods=["GET", "POST"])
+def team_product_request():
+    
+    if request.form:
+        data=request.form
+        #TODO remove hardcoded user_id
+        product_request=ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"), 
+        user_id=2, date=data.get("date"), status="pending", organisation=data.get("organisation")
+            , city=data.get("city", ""), state=data.get("state"), team=data.get("team"))
+    
+        if data.get("status") == "fulfilled":
+            inventory = Inventory.query.filter_by(product_id=data.get("product")).first()
+            if inventory is not None:
+                inventory.quantity = inventory.quantity - int(data.get("quantity"))
+                if inventory.quantity < LOW_STOCK_THRESHOLD:
+                    # mail.send(msg) TODO
+                    pass
+                db.session.add(inventory)
+        db.session.add(product_request)
+        db.session.commit()
+    products = Product.query.all()
+    product_requests=ProductRequest.query.order_by(ProductRequest.date.desc())
+    return render_template("teamproductrequest.html", products=products, product_requests=product_requests)
+
+
+
 @app.route("/delete-product-request/<request_id>")
 def delete_product_request(request_id):
     productrequest=ProductRequest.query.filter_by(id=request_id).first()
@@ -192,6 +228,18 @@ def delete_product_request(request_id):
     db.session.delete(productrequest)
     db.session.commit()
     return redirect ("/product-requests")
+
+@app.route("/team-delete-product-request/<request_id>")
+def team_delete_product_request(request_id):
+    productrequest=ProductRequest.query.filter_by(id=request_id).first()
+    product_id=productrequest.product_id
+    if productrequest.status == "fulfilled":
+        inventory = Inventory.query.filter_by(product_id=product_id).first()
+        inventory.quantity = inventory.quantity + productrequest.quantity
+    db.session.delete(productrequest)
+    db.session.commit()
+    return redirect ("/team-product-requests")
+
 
 
 @app.route("/purchase-orders", methods=["GET", "POST"])
@@ -226,6 +274,34 @@ def delete_purchase_order(request_id):
     db.session.delete(purchase_orders)
     db.session.commit()
     return redirect ("/purchase-orders")
+
+@app.route("/monthly-report")
+def monthly_report():
+    product_requests = ProductRequest.query.all()
+    all_data = []
+    for pr in product_requests:
+        pr_date = datetime.datetime.strptime(pr.date, '%Y-%m-%d').date()
+        if pr.status == "fulfilled" and pr_date.month == datetime.datetime.now().month:
+            result_data = dict()
+            result_data["program"] = pr.team
+            result_data["date"] = pr.date 
+            result_data["organisation"] = pr.organisation
+            result_data["PO name"] = pr.user.email
+            # result_data["purpose"] = pr.remarks
+            result_data["medium"] = pr.master_product.language
+            result_data["materials"] = pr.master_product.name
+            result_data["quantity"] = pr.quantity
+            all_data.append(result_data)
+    keys = all_data[0].keys()
+
+    csv_data = ''
+    with open('Media/out.csv', 'w') as output_file:
+        dict_writer = csv.DictWriter(output_file, keys)
+        dict_writer.writeheader()
+        dict_writer.writerows(all_data)
+    file_handle = open('Media/out.csv')
+    csv_data = file_handle.read()
+    return Response(csv_data, mimetype='text/csv', headers={'Content-disposition': 'attachment; filename=out.csv'})
 
     
     

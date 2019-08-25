@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import UserMixin
 
 
-from app import db,login_manager
+from app import db
 
 
 
@@ -52,11 +52,12 @@ class User(UserMixin,db.Model):
     contact_number=db.Column(db.String(12), nullable=False)
     team=db.Column(db.String(100), nullable=False)
     password_hash=db.Column(db.String(128))
+    
     def set_password(self, password):
         self.password_hash=generate_password_hash(password)
+    
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-        
+        return check_password_hash(self.password_hash, password)        
 
 class Vendor(db.Model):
     __tablename__="vendors"
