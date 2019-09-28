@@ -40,7 +40,6 @@ def unauthorized_callback():
     return redirect('/login?next=' + request.path)
 
 @app.route("/")
-@login_required
 def home():
     request_count = ProductRequest.query.count()
     print("All",request_count)
@@ -152,7 +151,7 @@ def login():
         if user is None or not user.check_password(data.get("Password")):
             print("User not present or wrong password")
             return redirect(url_for("login"))
-        # login_user(user) # TODO
+        login_user(user) # TODO
         if user.role == "admin":
             return redirect(url_for("home"))
         else: 
@@ -309,6 +308,6 @@ def monthly_report():
     
     
 if __name__ == "__main__":
-    app.run(debug=True,host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0')
 
 
