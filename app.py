@@ -29,7 +29,8 @@ from models import *
 
 @login_manager.user_loader 
 def load_user(user_id):
-    return User.query.all(id=user_id).first
+    return None
+
 
 LOW_STOCK_THRESHOLD = 100
 msg = Message("Dear Admin, Your stock is running low, Please restock soon", sender="adit.ganapathy@oberoi-is.net", 
@@ -143,8 +144,8 @@ def vendor():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for("home"))
+    # if current_user.is_authenticated:
+    #     return redirect(url_for("home"))
     if request.form:
         data=request.form
         user=User.query.filter_by(email=data.get("Email")).first()
@@ -311,3 +312,6 @@ if __name__ == "__main__":
     app.run(host='0.0.0.0')
 
 
+    
+# if __name__ == "__main__":
+#     app.run(debug=True)
