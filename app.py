@@ -21,24 +21,24 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
 mail = Mail(app)
 migrate = Migrate(app, db)
-login_manager=LoginManager(app)
-login_manager.init_app(app)
+# login_manager=LoginManager(app)
+# login_manager.init_app(app)
 # model imports here
 from models import *
 
 
-@login_manager.user_loader 
-def load_user(user_id):
-    return None
+# @login_manager.user_loader 
+# def load_user(user_id):
+#     return None
 
 
 LOW_STOCK_THRESHOLD = 100
 msg = Message("Dear Admin, Your stock is running low, Please restock soon", sender="adit.ganapathy@oberoi-is.net", 
         recipients=["adit.ganapathy@outlook.com"])
 
-@login_manager.unauthorized_handler
-def unauthorized_callback():
-    return redirect('/login?next=' + request.path)
+# @login_manager.unauthorized_handler
+# def unauthorized_callback():
+#     return redirect('/login?next=' + request.path)
 
 @app.route("/")
 def home():
@@ -152,7 +152,7 @@ def login():
         if user is None or not user.check_password(data.get("Password")):
             print("User not present or wrong password")
             return redirect(url_for("login"))
-        login_user(user) # TODO
+        # login_user(user) # TODO
         if user.role == "admin":
             return redirect(url_for("home"))
         else: 
