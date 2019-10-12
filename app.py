@@ -44,7 +44,6 @@ def unauthorized_callback():
 @login_required
 def home():
     request_count = ProductRequest.query.count()
-    print("All",request_count)
     team_pse_request = ProductRequest.query.filter_by(team="pse") 
     team_pse_count  = (team_pse_request.count())
     team_pe_request = ProductRequest.query.filter_by(team="pe")
@@ -68,10 +67,20 @@ def home():
         requestdata["others"]=round(((request_count-team_pse_count-team_pe_count-team_training_count)/request_count)*100,0)
     except:
         requestdata["others"]=0   
-    print(requestdata)
     # product_count = product_request.master_product.name.query.count()
     # print("All: ", product_count)
-    return render_template("dashboard.html", requestdata=requestdata)
+    top_productdata = dict()
+    total_requests = ProductRequest.query.all()
+    # No filter applied
+    for pr in total_requests:
+        product_name = pr.master_product.name+ ' - ' + pr.master_product.language
+        top_productdata[product_name]= top_productdata.get(product_name, 0)+pr.quantity
+    product_data = (sorted(top_productdata.items(), key=lambda x: x[1], reverse=True))
+
+    pending_requests = ProductRequest.query.filter_by(status = "pending")
+    pending_requests = pending_requests
+        
+    return render_template("dashboard.html", requestdata=requestdata, top_products = product_data, pending_requests=pending_requests)
 
 @app.route("/team-home", methods=["GET", "POST"])
 def team_home():
