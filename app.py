@@ -15,6 +15,7 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(APP_ROOT, 'Media')
 
 app = Flask(__name__, static_url_path="/static")
+
 app.config.from_object(config.Config)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
