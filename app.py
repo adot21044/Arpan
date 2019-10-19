@@ -1,4 +1,4 @@
-from models import *
+
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, Response
 from flask_sqlalchemy import SQLAlchemy
@@ -26,7 +26,7 @@ migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
 # model imports here
-
+from models import *
 
 @login_manager.user_loader
 def load_user(id):
