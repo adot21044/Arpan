@@ -1,3 +1,4 @@
+from models import *
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, Response
 from flask_sqlalchemy import SQLAlchemy
@@ -21,72 +22,76 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
 mail = Mail(app)
 migrate = Migrate(app, db)
-login_manager=LoginManager()
+login_manager = LoginManager()
 login_manager.init_app(app)
 # model imports here
-from models import *
 
 
-@login_manager.user_loader 
+@login_manager.user_loader
 def load_user(id):
     return User.query.get(id)
 
 
 LOW_STOCK_THRESHOLD = 100
-msg = Message("Dear Admin, Your stock is running low, Please restock soon", sender="adit.ganapathy@oberoi-is.net", 
-        recipients=["adit.ganapathy@outlook.com"])
+msg = Message("Dear Admin, Your stock is running low, Please restock soon", sender="adit.ganapathy@oberoi-is.net",
+              recipients=["adit.ganapathy@outlook.com"])
+
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
     return redirect('/login?next=' + request.path)
 
+
 @app.route("/")
 @login_required
 def home():
     request_count = ProductRequest.query.count()
-    team_pse_request = ProductRequest.query.filter_by(team="pse") 
-    team_pse_count  = (team_pse_request.count())
+    team_pse_request = ProductRequest.query.filter_by(team="pse")
+    team_pse_count = (team_pse_request.count())
     team_pe_request = ProductRequest.query.filter_by(team="pe")
     team_pe_count = (team_pe_request.count())
     team_training_request = ProductRequest.query.filter_by(team="training")
     team_training_count = (team_training_request.count())
-    requestdata=dict()
+    requestdata = dict()
     try:
-        requestdata["pse"]=round((team_pse_count/request_count)*100,0)
+        requestdata["pse"] = round((team_pse_count/request_count)*100, 0)
     except:
-        requestdata["pse"]=0
+        requestdata["pse"] = 0
     try:
-        requestdata["pe"]=round((team_pe_count/request_count)*100,0)
+        requestdata["pe"] = round((team_pe_count/request_count)*100, 0)
     except:
-        requestdata["pe"]=0
+        requestdata["pe"] = 0
     try:
-        requestdata["training"]=round((team_training_count/request_count)*100,0)
+        requestdata["training"] = round(
+            (team_training_count/request_count)*100, 0)
     except:
-        requestdata["training"]=0
+        requestdata["training"] = 0
     try:
-        requestdata["others"]=round(((request_count-team_pse_count-team_pe_count-team_training_count)/request_count)*100,0)
+        requestdata["others"] = round(
+            ((request_count-team_pse_count-team_pe_count-team_training_count)/request_count)*100, 0)
     except:
-        requestdata["others"]=0   
+        requestdata["others"] = 0
     # product_count = product_request.master_product.name.query.count()
     # print("All: ", product_count)
     top_productdata = dict()
     total_requests = ProductRequest.query.all()
     # No filter applied
     for pr in total_requests:
-        product_name = pr.master_product.name+ ' - ' + pr.master_product.language
-        top_productdata[product_name]= top_productdata.get(product_name, 0)+pr.quantity
-    product_data = (sorted(top_productdata.items(), key=lambda x: x[1], reverse=True))
+        product_name = pr.master_product.name + ' - ' + pr.master_product.language
+        top_productdata[product_name] = top_productdata.get(
+            product_name, 0)+pr.quantity
+    product_data = (sorted(top_productdata.items(),
+                           key=lambda x: x[1], reverse=True))
 
-    pending_requests = ProductRequest.query.filter_by(status = "pending")
+    pending_requests = ProductRequest.query.filter_by(status="pending")
     pending_requests = pending_requests
-        
-    return render_template("dashboard.html", requestdata=requestdata, top_products = product_data, pending_requests=pending_requests)
+
+    return render_template("dashboard.html", requestdata=requestdata, top_products=product_data, pending_requests=pending_requests)
+
 
 @app.route("/team-home", methods=["GET", "POST"])
 def team_home():
     return render_template("teamdashboard.html")
-
-
 
 
 @app.route("/inventory", methods=["GET", "POST"])
@@ -103,16 +108,13 @@ def inventory():
     return render_template("inventory.html", stock=stock, products=products)
 
 
-    
-
 @app.route("/products", methods=["GET", "POST"])
 def product():
     if request.form:
         print(request.form)
         data = request.form
         product = Product(name=data.get("name"), type=data.get("type"), mrp=data.get("mrp"), description=data.get(
-            "description"), dateadded=str(datetime.datetime.now()), dateupdated=str(datetime.datetime.now()), language=data.get("language"), version
-                =data.get("version"))
+            "description"), dateadded=str(datetime.datetime.now()), dateupdated=str(datetime.datetime.now()), language=data.get("language"), version=data.get("version"))
         if 'file_url' in request.files:
             file_url = request.files['file_url']
             filename = secure_filename(file_url.filename)
@@ -120,7 +122,7 @@ def product():
             product.file_url = filename
         db.session.add(product)
         db.session.commit()
-    products = Product.query.all()
+    products = Product.query.order_by(Product.dateupdated.desc())
     vendors = Vendor.query.all()
 
     return render_template("product.html", products=products, vendors=vendors)
@@ -130,9 +132,9 @@ def product():
 def users():
     if request.form:
         print(request.form)
-        data=request.form
-        user= User(email=data.get("Email"), role=data.get("Role"), 
-            contact_number=data.get("contact_number"), team=data.get("team"))
+        data = request.form
+        user = User(email=data.get("Email"), role=data.get("Role"),
+                    contact_number=data.get("contact_number"), team=data.get("team"))
         user.set_password(data.get("Password"))
         db.session.add(user)
         db.session.commit()
@@ -141,36 +143,38 @@ def users():
 
     return render_template("users.html", users=users)
 
+
 @app.route("/vendors", methods=["GET", "POST"])
 def vendor():
     if request.form:
-        data=request.form
-        vendor= Vendor(name=data.get("Name"), city=data.get("city"), GST=data.get("gst"), contact_person=data.get
-         ("contact_person"), contact_number=str(data.get("contact_number")), remarks=data.get("remarks"))
+        data = request.form
+        vendor = Vendor(name=data.get("Name"), city=data.get("city"), GST=data.get("gst"), contact_person=data.get
+                        ("contact_person"), contact_number=str(data.get("contact_number")), remarks=data.get("remarks"))
         db.session.add(vendor)
         db.session.commit()
-    vendors= Vendor.query.all()
+    vendors = Vendor.query.all()
     return render_template("vendor.html", vendors=vendors)
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     # if current_user.is_authenticated:
     #     return redirect(url_for("home"))
     if request.form:
-        data=request.form
-        user=User.query.filter_by(email=data.get("Email")).first()
+        data = request.form
+        user = User.query.filter_by(email=data.get("Email")).first()
         if user is None or not user.check_password(data.get("Password")):
             print("User not present or wrong password")
             return redirect(url_for("login"))
         print("user found")
-        login_user(user) # TODO
+        login_user(user)  # TODO
         print(user.role)
         if user.role == "admin":
             print('redirecting to home')
             return redirect("/")
-        else: 
+        else:
             return redirect(url_for("team_home"))
-    #form=Loginform()
+    # form=Loginform()
     return render_template("login.html")
 
 
@@ -182,18 +186,19 @@ def logout():
 
 @app.route("/product-requests", methods=["GET", "POST"])
 def product_request():
-    
+
     if request.form:
-        data=request.form
-        #TODO remove hardcoded user_id
-        product_request=ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"), 
-        user_id=2, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation")
-            , city=data.get("city", ""), state=data.get("state"), team=data.get("team"))
-    
+        data = request.form
+        # TODO remove hardcoded user_id
+        product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
+                                         user_id=2, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation"), city=data.get("city", ""), state=data.get("state"), team=data.get("team"))
+
         if data.get("status") == "fulfilled":
-            inventory = Inventory.query.filter_by(product_id=data.get("product")).first()
+            inventory = Inventory.query.filter_by(
+                product_id=data.get("product")).first()
             if inventory is not None:
-                inventory.quantity = inventory.quantity - int(data.get("quantity"))
+                inventory.quantity = inventory.quantity - \
+                    int(data.get("quantity"))
                 if inventory.quantity < LOW_STOCK_THRESHOLD:
                     # mail.send(msg) TODO
                     pass
@@ -201,24 +206,26 @@ def product_request():
         db.session.add(product_request)
         db.session.commit()
     products = Product.query.all()
-    product_requests=ProductRequest.query.order_by(ProductRequest.date.desc())
+    product_requests = ProductRequest.query.order_by(
+        ProductRequest.date.desc())
     return render_template("productrequest.html", products=products, product_requests=product_requests)
 
 
 @app.route("/team-product-requests", methods=["GET", "POST"])
 def team_product_request():
-    
+
     if request.form:
-        data=request.form
-        #TODO remove hardcoded user_id
-        product_request=ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"), 
-        user_id=2, date=data.get("date"), status="pending", organisation=data.get("organisation")
-            , city=data.get("city", ""), state=data.get("state"), team=data.get("team"))
-    
+        data = request.form
+        # TODO remove hardcoded user_id
+        product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
+                                         user_id=2, date=data.get("date"), status="pending", organisation=data.get("organisation"), city=data.get("city", ""), state=data.get("state"), team=data.get("team"))
+
         if data.get("status") == "fulfilled":
-            inventory = Inventory.query.filter_by(product_id=data.get("product")).first()
+            inventory = Inventory.query.filter_by(
+                product_id=data.get("product")).first()
             if inventory is not None:
-                inventory.quantity = inventory.quantity - int(data.get("quantity"))
+                inventory.quantity = inventory.quantity - \
+                    int(data.get("quantity"))
                 if inventory.quantity < LOW_STOCK_THRESHOLD:
                     # mail.send(msg) TODO
                     pass
@@ -226,33 +233,33 @@ def team_product_request():
         db.session.add(product_request)
         db.session.commit()
     products = Product.query.all()
-    product_requests=ProductRequest.query.order_by(ProductRequest.date.desc())
+    product_requests = ProductRequest.query.order_by(
+        ProductRequest.date.desc())
     return render_template("teamproductrequest.html", products=products, product_requests=product_requests)
-
 
 
 @app.route("/delete-product-request/<request_id>")
 def delete_product_request(request_id):
-    productrequest=ProductRequest.query.filter_by(id=request_id).first()
-    product_id=productrequest.product_id
+    productrequest = ProductRequest.query.filter_by(id=request_id).first()
+    product_id = productrequest.product_id
     if productrequest.status == "fulfilled":
         inventory = Inventory.query.filter_by(product_id=product_id).first()
         inventory.quantity = inventory.quantity + productrequest.quantity
     db.session.delete(productrequest)
     db.session.commit()
-    return redirect ("/product-requests")
+    return redirect("/product-requests")
+
 
 @app.route("/team-delete-product-request/<request_id>")
 def team_delete_product_request(request_id):
-    productrequest=ProductRequest.query.filter_by(id=request_id).first()
-    product_id=productrequest.product_id
+    productrequest = ProductRequest.query.filter_by(id=request_id).first()
+    product_id = productrequest.product_id
     if productrequest.status == "fulfilled":
         inventory = Inventory.query.filter_by(product_id=product_id).first()
         inventory.quantity = inventory.quantity + productrequest.quantity
     db.session.delete(productrequest)
     db.session.commit()
-    return redirect ("/team-product-requests")
-
+    return redirect("/team-product-requests")
 
 
 @app.route("/purchase-orders", methods=["GET", "POST"])
@@ -260,33 +267,37 @@ def purchase_orders():
     if request.form:
 
         data = request.form
-        purchase_orders=PurchaseOrders(product_id=data.get("product"), price=data.get("price"), vendor=data.get("vendor"),quantity=data.get(
-            "quantity"), remarks=data.get("remarks"), date_added=str(datetime.datetime.now()),date_modified=str(datetime.datetime.now()), status=data.get("status"))
+        purchase_orders = PurchaseOrders(product_id=data.get("product"), price=data.get("price"), vendor=data.get("vendor"), quantity=data.get(
+            "quantity"), remarks=data.get("remarks"), date_added=str(datetime.datetime.now()), date_modified=str(datetime.datetime.now()), status=data.get("status"))
         if data.get("status") == "accepted":
-            inventory = Inventory.query.filter_by(product_id=data.get("product"), vendor=data.get("vendor")).first()
+            inventory = Inventory.query.filter_by(product_id=data.get(
+                "product"), vendor=data.get("vendor")).first()
             if inventory is not None:
-                inventory.quantity = inventory.quantity + int(data.get("quantity"))
+                inventory.quantity = inventory.quantity + \
+                    int(data.get("quantity"))
             else:
-                inventory = Inventory(product_id=data.get("product"), price=data.get("price"), quantity=data.get("quantity"),date=str(datetime.datetime.now()),vendor=data.get("vendor"))
+                inventory = Inventory(product_id=data.get("product"), price=data.get("price"), quantity=data.get(
+                    "quantity"), date=str(datetime.datetime.now()), vendor=data.get("vendor"))
             db.session.add(inventory)
         db.session.add(purchase_orders)
         db.session.commit()
     stock = PurchaseOrders.query.order_by(PurchaseOrders.date_added.desc())
     products = Product.query.all()
-    vendors= Vendor.query.all()
+    vendors = Vendor.query.all()
     return render_template("purchaseorder.html", stock=stock, products=products, vendors=vendors)
 
 
 @app.route("/delete-purchase-order/<request_id>")
 def delete_purchase_order(request_id):
-    purchase_orders=PurchaseOrders.query.filter_by(id=request_id).first()
-    product_id=purchase_orders.product_id
+    purchase_orders = PurchaseOrders.query.filter_by(id=request_id).first()
+    product_id = purchase_orders.product_id
     if purchase_orders.status == "accepted":
         inventory = Inventory.query.filter_by(product_id=product_id).first()
         inventory.quantity = inventory.quantity - purchase_orders.quantity
     db.session.delete(purchase_orders)
     db.session.commit()
-    return redirect ("/purchase-orders")
+    return redirect("/purchase-orders")
+
 
 @app.route("/monthly-report")
 def monthly_report():
@@ -297,7 +308,7 @@ def monthly_report():
         if pr.status == "fulfilled" and pr_date.month == datetime.datetime.now().month:
             result_data = dict()
             result_data["program"] = pr.team
-            result_data["date"] = pr.date 
+            result_data["date"] = pr.date
             result_data["organisation"] = pr.organisation
             result_data["PO name"] = pr.user.email
             # result_data["purpose"] = pr.remarks
@@ -305,8 +316,9 @@ def monthly_report():
             result_data["materials"] = pr.master_product.name
             result_data["quantity"] = pr.quantity
             all_data.append(result_data)
-    keys = all_data[0].keys()
-
+    keys = ['program', 'date', 'organisation',
+            'PO name', 'medium', 'materials', 'quantity']
+    print(keys)
     csv_data = ''
     with open('Media/out.csv', 'w') as output_file:
         dict_writer = csv.DictWriter(output_file, keys)
@@ -316,15 +328,46 @@ def monthly_report():
     csv_data = file_handle.read()
     return Response(csv_data, mimetype='text/csv', headers={'Content-disposition': 'attachment; filename=out.csv'})
 
-    
-    
 
+@app.route("/data")
+def import_data():
+    data = []
+    with open('Media/upload_data.csv', 'r') as csv_file:
+        reader = csv.reader(csv_file)
+        for row in reader:
+            cost = row[4]
+            if(cost == ''):
+                cost = '0'
+            data.append({
+                "Name": row[0],
+                "English": row[1],
+                "Hindi": row[2],
+                "Marathi": row[3],
+                "Cost": int(cost),
+                "Vendor Details": row[5],
+            })
+            
+        for entry in data:
+            if(entry.get("English") != '' and entry.get("English") != '0'):
+                product = Product(name=entry.get("Name"), type="Normal", mrp=int(entry.get("Cost")), description="", dateadded=str(
+                    datetime.datetime.now()), dateupdated=str(datetime.datetime.now()), language="English", version='1')
+            if(entry.get("Hindi") != '' and entry.get("Hindi") != '0'):
+                product = Product(name=entry.get("Name"), type="Normal", mrp=int(entry.get("Cost")), description="", dateadded=str(
+                    datetime.datetime.now()), dateupdated=str(datetime.datetime.now()), language="Hindi", version='1')
+            if(entry.get("Marathi") != '' and entry.get("Marathi") != '0'):
+                product = Product(name=entry.get("Name"), type="Normal", mrp=int(entry.get("Cost")), description="", dateadded=str(
+                    datetime.datetime.now()), dateupdated=str(datetime.datetime.now()), language="Marathi", version='1')
+
+            db.session.add(product)
+            db.session.commit()
     
-    
+    return Response("Done")
+
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
 
 
-    
 # if __name__ == "__main__":
 #     app.run(debug=True)
