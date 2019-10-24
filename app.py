@@ -92,7 +92,42 @@ def home():
 
 @app.route("/team-home", methods=["GET", "POST"])
 def team_home():
-    return render_template("teamdashboard.html")
+    request_count = ProductRequest.query.count()
+    team_pse_request = ProductRequest.query.filter_by(team="pse")
+    team_pse_count = (team_pse_request.count())
+    team_pe_request = ProductRequest.query.filter_by(team="pe")
+    team_pe_count = (team_pe_request.count())
+    team_training_request = ProductRequest.query.filter_by(team="training")
+    team_training_count = (team_training_request.count())
+    requestdata = dict()
+    try:
+        requestdata["pse"] = round((team_pse_count/request_count)*100, 0)
+    except:
+        requestdata["pse"] = 0
+    try:
+        requestdata["pe"] = round((team_pe_count/request_count)*100, 0)
+    except:
+        requestdata["pe"] = 0
+    try:
+        requestdata["training"] = round(
+            (team_training_count/request_count)*100, 0)
+    except:
+        requestdata["training"] = 0
+    try:
+        requestdata["others"] = round(
+            ((request_count-team_pse_count-team_pe_count-team_training_count)/request_count)*100, 0)
+    except:
+        requestdata["others"] = 0
+    top_productdata = dict()
+    total_requests = ProductRequest.query.all()
+    # No filter applied
+    for pr in total_requests:
+        product_name = pr.master_product.name + ' - ' + pr.master_product.language
+        top_productdata[product_name] = top_productdata.get(
+            product_name, 0)+pr.quantity
+    product_data = (sorted(top_productdata.items(),
+                           key=lambda x: x[1], reverse=True))
+    return render_template("teamdashboard.html", top_products=product_data)
 
 
 @app.route("/inventory", methods=["GET", "POST"])
@@ -366,9 +401,9 @@ def import_data():
 
 
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0')
-
-
 # if __name__ == "__main__":
-#     app.run(debug=True)
+#     app.run(host='0.0.0.0')
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
