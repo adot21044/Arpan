@@ -22,9 +22,9 @@
 
                                 <div class="footer">
                                     <div class="legend">
-                                        <i class="fa fa-circle text-info"></i> Open
-                                        <i class="fa fa-circle text-danger"></i> Bounce
-                                        <i class="fa fa-circle text-warning"></i> Unsubscribe
+                                        <i class="fa fa-circle text-info"></i> PSE
+                                        <i class="fa fa-circle text-danger"></i> PE
+                                        <i class="fa fa-circle text-warning"></i> Training
                                     </div>
                                     <!-- <hr> -->
                                     <!-- <div class="stats">
@@ -34,7 +34,42 @@
                             </div>
                         </div>
                     </div>
-
+                    <div class="col-md-8">
+                        <!-- Top Products -->
+               <div class="card">
+                       <div class="header">
+                           <h4 class="title">Top Products by Request</h4>
+                       </div>
+                       <div class="card-body table-responsive">
+                           <table class="table table-hover table-striped">
+       
+                               <thead>
+                                   <tr>
+                                       <th>
+                                           Product
+                                       </th>
+       
+                                       <th>
+                                           Quantity
+                                       </th>
+       
+                                   </tr>
+                               </thead>
+       
+                               <tbody>
+                                   {% for item in top_products%}
+                                   <tr>
+                                       <th>{{item[0]}}</th>
+                                       <th>{{item[1]}}</th>
+                                   </tr>
+                                   {%endfor%}
+                               </tbody>
+                           </table>
+                       </div>
+                   </div>
+                       
+                   </div>
+<!-- 
                     <div class="col-md-8">
                         <div class="card">
                             <div class="header">
@@ -56,12 +91,12 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
 
 
-                <div class="row">
+                <!-- <div class="row">
                     <div class="col-md-6">
                         <div class="card ">
                             <div class="header">
@@ -211,7 +246,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
             <script type="text/javascript">
                 $(document).ready(function(){
