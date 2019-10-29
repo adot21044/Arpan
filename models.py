@@ -101,3 +101,18 @@ class PurchaseOrders(db.Model):
     date_added= db.Column(db.String(30), nullable=False)
     date_modified= db.Column(db.String(30), nullable=False)
     status=db.Column(db.String(30), nullable=False)
+
+
+class QuarterlyRequest(db.Model):
+    __tablename__="quarterly_request"
+    id= db.Column(db.Integer, primary_key=True, autoincrement=True)
+    product_id= db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
+    master_product= db.relationship("Product", foreign_keys=product_id)
+    quantity= db.Column(db.Integer, nullable=False)
+    user_id= db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user= db.relationship("User", foreign_keys=user_id)
+    # master_vendor= db.relationship("Vendor", foreign_keys=product_id)
+    date= db.Column(db.String(30), nullable=False)
+    team=db.Column(db.String(100), nullable=True)
+    quarter_month=db.Column(db.String(100), nullable=False)
+    year=db.Column(db.Integer, nullable=False)

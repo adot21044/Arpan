@@ -78,19 +78,22 @@ def home():
     total_requests = ProductRequest.query.all()
     # No filter applied
     for pr in total_requests:
-        product_name = pr.master_product.name + ' - ' + pr.master_product.language
-        top_productdata[product_name] = top_productdata.get(
-            product_name, 0)+pr.quantity
+        product_name = pr.master_product.name +' - '+ str(pr.master_product.language)
+        top_productdata[product_name] = top_productdata.get(product_name, 0)+pr.quantity
     product_data = (sorted(top_productdata.items(),
                            key=lambda x: x[1], reverse=True))
 
     pending_requests = ProductRequest.query.filter_by(status="pending")
     pending_requests = pending_requests
 
-    return render_template("dashboard.html", requestdata=requestdata, top_products=product_data, pending_requests=pending_requests)
+    purchase_order = PurchaseOrders.query.filter_by(status="inproduction")
+    purchase_order = purchase_order
+
+    return render_template("dashboard.html", requestdata=requestdata, top_products=product_data, pending_requests=pending_requests, purchase_order=purchase_order)
 
 
 @app.route("/team-home", methods=["GET", "POST"])
+@login_required
 def team_home():
     request_count = ProductRequest.query.count()
     team_pse_request = ProductRequest.query.filter_by(team="pse")
@@ -122,7 +125,7 @@ def team_home():
     total_requests = ProductRequest.query.all()
     # No filter applied
     for pr in total_requests:
-        product_name = pr.master_product.name + ' - ' + pr.master_product.language
+        product_name = pr.master_product.name + ' - ' + str(pr.master_product.language)
         top_productdata[product_name] = top_productdata.get(
             product_name, 0)+pr.quantity
     product_data = (sorted(top_productdata.items(),
@@ -227,7 +230,7 @@ def product_request():
         data = request.form
         # TODO remove hardcoded user_id
         product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
-                                         user_id=2, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation"), city=data.get("city", ""), state=data.get("state"), team=data.get("team"))
+                                         user_id=current_user.id, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation"), city=data.get("city", ""), state=data.get("state"), team=data.get("team"))
 
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(
@@ -347,13 +350,13 @@ def monthly_report():
             result_data["date"] = pr.date
             result_data["organisation"] = pr.organisation
             result_data["PO name"] = pr.user.email
-            # result_data["purpose"] = pr.remarks
+            result_data["purpose"] = pr.state
             result_data["medium"] = pr.master_product.language
             result_data["materials"] = pr.master_product.name
             result_data["quantity"] = pr.quantity
             all_data.append(result_data)
     keys = ['program', 'date', 'organisation',
-            'PO name', 'medium', 'materials', 'quantity']
+            'PO name', 'purpose', 'medium', 'materials', 'quantity']
     print(keys)
     csv_data = ''
     with open('Media/out.csv', 'w') as output_file:
@@ -398,6 +401,21 @@ def import_data():
             db.session.commit()
     
     return Response("Done")
+
+@app.route("/quarterly-product-requests", methods=["GET", "POST"])
+def quarterly_product_requests():
+    if request.form:
+        data = request.form
+        # TODO remove hardcoded user_id
+        quarterly_request = QuarterlyRequest(product_id=data.get("product"), quantity=data.get("quantity"),
+            user_id=current_user.id, date=data.get("date"),team=data.get("team"), quarter_month=data.get("quarter_month"), year=data.get("year"))
+        db.session.add(quarterly_request)
+        db.session.commit()
+    products = Product.query.all()
+    quarterly_requests = QuarterlyRequest.query.order_by(
+        QuarterlyRequest.date.desc())
+    return render_template("quarterlyproductrequests.html", products=products, quarterly_requests=quarterly_requests)
+
 
 
 
