@@ -3,7 +3,6 @@
 {% block content %}
 
 <div class="row">
-        <h2 style="margin-left: 12px">Purchase Order</h2>
     <div class="col-md-3">
     
         <div class="card" style="padding:24px">
@@ -162,6 +161,63 @@
                     </div>
                 </div>
         </div>
+
+        <div class="col-md-8">
+                <div class="card" style="padding:24px">
+                    <div class="card-header">
+                        <h4>Quarterly Product Requests</h4>
+                    </div>
+        
+                    <div class="card-body table-full-width table-responsive">
+                        <table class="table table-hover table-striped">
+        
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Product
+                                    </th>
+        
+                                    <th>
+                                        Quantity
+                                    </th>
+        
+                                    <th>
+                                        Team
+                                    </th>
+                                    <th>
+                                        Date
+                                    </th>
+                                    <th>
+                                        For quarter
+                                    </th>
+        <!--                          
+                                    <th>
+                                        Delete?
+                                    </th> -->
+        
+        
+                                </tr>
+                            </thead>
+        
+                            <tbody>
+                                {% for quarterly_request in quarterly_requests%}
+                                <tr>
+                                    <th>{{quarterly_request.master_product.name}} - {{quarterly_request.master_product.language}}</th>
+                                    <th>{{quarterly_request.quantity}}</th>
+                                    <th>{{quarterly_request.team}}</th>
+                                    <th>{{quarterly_request.date}}</th>
+                                    <th>{{quarterly_request.quarter_month}} - {{quarterly_request.year}}</th>
+                                    <!-- <th><a href="/delete-product-request/{{quarterly_request.id}}" onclick="return confirm('Are you sure you want to delete this order?')">Delete</a></th> -->
+                                </tr>
+                                {%endfor%}
+                            </tbody>
+                        </table>
+                    </div>
+        
+        
+        
+                </div>
+            </div>
     </div>
     
 </div> -->

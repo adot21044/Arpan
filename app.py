@@ -144,7 +144,15 @@ def inventory():
         db.session.commit()
     stock = Inventory.query.order_by(Inventory.date.desc())
     products = Product.query.all()
-    return render_template("inventory.html", stock=stock, products=products)
+    top_productdata = dict()
+    total_requests = QuarterlyRequest.query.all()
+    # No filter applied
+    for pr in total_requests:
+        product_name = pr.master_product.name +' - '+ str(pr.master_product.language)
+        top_productdata[product_name] = top_productdata.get(product_name, 0)+pr.quantity
+    product_data = (sorted(top_productdata.items(),
+                           key=lambda x: x[1], reverse=True))
+    return render_template("inventory.html", stock=stock, products=products, product_data=product_data)
 
 
 @app.route("/products", methods=["GET", "POST"])
@@ -255,9 +263,8 @@ def team_product_request():
 
     if request.form:
         data = request.form
-        # TODO remove hardcoded user_id
         product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
-                                         user_id=2, date=data.get("date"), status="pending", organisation=data.get("organisation"), city=data.get("city", ""), state=data.get("state"), team=data.get("team"))
+            user_id=current_user.id, date=data.get("date"), status="pending", organisation=data.get("organisation"), city=data.get("city", ""), state=data.get("state"), team=current_user.team)
 
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(
@@ -272,9 +279,10 @@ def team_product_request():
         db.session.add(product_request)
         db.session.commit()
     products = Product.query.all()
-    product_requests = ProductRequest.query.order_by(
+    product_requests = ProductRequest.query.filter_by(team=current_user.team).order_by(
         ProductRequest.date.desc())
-    return render_template("teamproductrequest.html", products=products, product_requests=product_requests)
+    quarterly_requests = QuarterlyRequest.query.filter_by(team=current_user.team).order_by(QuarterlyRequest.date.desc())
+    return render_template("teamproductrequest.html", products=products, product_requests=product_requests, quarterly_requests=quarterly_requests)
 
 
 @app.route("/delete-product-request/<request_id>")
@@ -406,13 +414,12 @@ def import_data():
 def quarterly_product_requests():
     if request.form:
         data = request.form
-        # TODO remove hardcoded user_id
         quarterly_request = QuarterlyRequest(product_id=data.get("product"), quantity=data.get("quantity"),
-            user_id=current_user.id, date=data.get("date"),team=data.get("team"), quarter_month=data.get("quarter_month"), year=data.get("year"))
+            user_id=current_user.id, date=data.get("date"),team=current_user.team, quarter_month=data.get("quarter_month"), year=data.get("year"))
         db.session.add(quarterly_request)
         db.session.commit()
     products = Product.query.all()
-    quarterly_requests = QuarterlyRequest.query.order_by(
+    quarterly_requests = QuarterlyRequest.query.filter_by(team=current_user.team).order_by(
         QuarterlyRequest.date.desc())
     return render_template("quarterlyproductrequests.html", products=products, quarterly_requests=quarterly_requests)
 

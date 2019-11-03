@@ -6,7 +6,7 @@
     <div class="card" style="padding:24px">
             <div >
                     <div class="card-header">
-                        <h4>Orders list</h4>
+                        <h4>Inventory</h4>
                     </div>
         
                     <div class="card-body table-full-width table-responsive">
@@ -70,9 +70,53 @@
                 </div>
             </div>
     </div>
+
+<div class="col-md-4">
+        <div class="card">
+        <div class="header">
+            <h4 class="title">Quarterly Requests</h4>
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table table-hover table-striped">
+
+                <thead>
+                    <tr>
+                        <th>
+                            Product
+                        </th>
+
+                        <th>
+                            Quantity
+                        </th>
+
+                        <!-- <th>
+                            Team
+                        </th>
+
+                        <th>
+                            Date
+                        </th> -->
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for data,quantity in product_data%}
+                    <tr>
+                        <th>{{data}}</th>
+                        <th>{{quantity}}</th>
+                        <!-- <th>{{request.team}}</th>
+                        <th>{{request.date}}</th> -->
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
 </div>
 
-</div>
 
 <!--     
     <div class="col-md-8">
