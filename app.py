@@ -195,11 +195,11 @@ def product_edit(product_id):
         product.language=data.get("language")
         product.version=data.get("version")
         
-        if 'file_url' in request.files:
-            file_url = request.files['file_url']
-            filename = secure_filename(file_url.filename)
-            file_url.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            product.file_url = filename
+        # if 'file_url' in request.files:
+        #     file_url = request.files['file_url']
+        #     filename = secure_filename(file_url.filename)
+        #     file_url.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        #     product.file_url = filename
         # db.session.add(product)
         db.session.commit()
         return redirect(url_for('product'))
