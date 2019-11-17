@@ -21,6 +21,8 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db = SQLAlchemy(app)
+
+
 mail = Mail(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager()
@@ -28,14 +30,18 @@ login_manager.init_app(app)
 # model imports here
 from models import *
 
+
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(id)
 
 
 LOW_STOCK_THRESHOLD = 100
-msg = Message("Dear Admin, Your stock is running low, Please restock soon", sender="adit.ganapathy@oberoi-is.net",
-              recipients=["adit.ganapathy@outlook.com"])
+msg = Message("Dear Admin, An order has been placed, please place a purchase order", sender="adit.ganapathy@outlook.com",
+              recipients=["adit.ganapathy@oberoi-is.net", "arnavanytime@gmail.com"])
+
+msg2 = Message("Dear Team Manager, your quarterly stock is running low", sender="adit.ganapathy@outlook.com", recipients=["adit.ganapathy@oberoi-is.net", "arnavanytime@gmail.com"])
+
 
 
 @login_manager.unauthorized_handler
@@ -161,7 +167,7 @@ def product():
         print(request.form)
         data = request.form
         product = Product(name=data.get("name"), type=data.get("type"), mrp=data.get("mrp"), description=data.get(
-            "description"), dateadded=str(datetime.datetime.now()), dateupdated=str(datetime.datetime.now()), language=data.get("language"), version=data.get("version"))
+            "description"), threshold=data.get("threshold"),dateadded=str(datetime.datetime.now()), dateupdated=str(datetime.datetime.now()), language=data.get("language"), version=data.get("version"))
         if 'file_url' in request.files:
             file_url = request.files['file_url']
             filename = secure_filename(file_url.filename)
@@ -173,6 +179,33 @@ def product():
     vendors = Vendor.query.all()
 
     return render_template("product.html", products=products, vendors=vendors)
+
+
+@app.route("/product_edit_<product_id>", methods=["GET", "POST"])
+def product_edit(product_id):
+    product = Product.query.filter_by(id=product_id).first()
+    if request.form:
+        data = request.form
+        product.name = data.get("name")
+        product.type=data.get("type")
+        product.mrp=data.get("mrp")
+        product.description=data.get("description")
+        product.threshold=data.get("threshold")
+        product.dateupdated=str(datetime.datetime.now())
+        product.language=data.get("language")
+        product.version=data.get("version")
+        
+        if 'file_url' in request.files:
+            file_url = request.files['file_url']
+            filename = secure_filename(file_url.filename)
+            file_url.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            product.file_url = filename
+        # db.session.add(product)
+        db.session.commit()
+        return redirect(url_for('product'))
+    vendors = Vendor.query.all()
+
+    return render_template("product-edit.html", product=product, vendors=vendors)
 
 
 @app.route("/users", methods=["GET", "POST"])
@@ -233,10 +266,8 @@ def logout():
 
 @app.route("/product-requests", methods=["GET", "POST"])
 def product_request():
-
     if request.form:
         data = request.form
-        # TODO remove hardcoded user_id
         product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
                                          user_id=current_user.id, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation"), city=data.get("city", ""), state=data.get("state"), team=data.get("team"))
 
@@ -246,9 +277,10 @@ def product_request():
             if inventory is not None:
                 inventory.quantity = inventory.quantity - \
                     int(data.get("quantity"))
-                if inventory.quantity < LOW_STOCK_THRESHOLD:
-                    # mail.send(msg) TODO
-                    pass
+                if inventory.quantity < product_request.master_product.threshold:
+                    msg2 = Message("Dear Admin, your inventory stock is running low", sender="adit.ganapathy@outlook.com", recipients=["adit.ganapathy@oberoi-is.net", "arnavanytime@gmail.com"])
+                    msg2.body = ('Product %s is below the threshold quantity' % product_request.master_product.threshold)
+                    mail.send(msg2)
                 db.session.add(inventory)
         db.session.add(product_request)
         db.session.commit()
@@ -328,6 +360,7 @@ def purchase_orders():
             db.session.add(inventory)
         db.session.add(purchase_orders)
         db.session.commit()
+        # Purchase Order Message TODO
     stock = PurchaseOrders.query.order_by(PurchaseOrders.date_added.desc())
     products = Product.query.all()
     vendors = Vendor.query.all()
@@ -421,6 +454,7 @@ def quarterly_product_requests():
     products = Product.query.all()
     quarterly_requests = QuarterlyRequest.query.filter_by(team=current_user.team).order_by(
         QuarterlyRequest.date.desc())
+    mail.send(msg)
     return render_template("quarterlyproductrequests.html", products=products, quarterly_requests=quarterly_requests)
 
 

@@ -24,6 +24,7 @@ class Product(db.Model):
     file_url = db.Column(db.String(255), nullable=True)
     version=db.Column(db.String(30), nullable=True)
     vendor = db.Column(db.Integer, db.ForeignKey("vendors.id"), nullable=True)
+    threshold = db.Column(db.Integer,  default=50, nullable=True)
 
 
     def __repr__(self):
