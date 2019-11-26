@@ -52,6 +52,8 @@ def unauthorized_callback():
 @app.route("/")
 @login_required
 def home():
+    msg2.body = ('Product %s is below the threshold quantity')
+    mail.send(msg2)
     request_count = ProductRequest.query.count()
     team_pse_request = ProductRequest.query.filter_by(team="pse")
     team_pse_count = (team_pse_request.count())

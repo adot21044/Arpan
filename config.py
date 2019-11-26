@@ -10,9 +10,9 @@ class Config(object):
 
     # for Adit's laptop
     SQLALCHEMY_DATABASE_URI= "postgresql://postgres:adot2004@localhost/arpandb"
-    MAIL_USERNAME = "adit.ganapathy@outlook.com"
-    MAIL_PASSWORD = "Monkeygeorge"
-    MAIL_SERVER='smtp.office365.com'
+    MAIL_USERNAME = "arpaninventorymanagement@gmail.com"
+    MAIL_PASSWORD = "Arpan@123"
+    MAIL_SERVER='smtp.gmail.com'
     MAIL_PORT= 587
     MAIL_USE_SSL= False
     MAIL_USE_TLS = True
