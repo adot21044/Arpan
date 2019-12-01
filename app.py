@@ -37,7 +37,7 @@ def load_user(id):
 
 
 LOW_STOCK_THRESHOLD = 100
-msg = Message("Dear Admin, An order has been placed, please place a purchase order", sender="adit.ganapathy@outlook.com",
+msg = Message("Dear Admin, An order has been placed, please place a purchase order", sender="arpaninventorymanagement@gmail.com",
               recipients=["adit.ganapathy@oberoi-is.net", "arnavanytime@gmail.com"])
 
 msg2 = Message("Dear Team Manager, your quarterly stock is running low", sender="adit.ganapathy@outlook.com", recipients=["adit.ganapathy@oberoi-is.net", "arnavanytime@gmail.com"])
@@ -52,8 +52,6 @@ def unauthorized_callback():
 @app.route("/")
 @login_required
 def home():
-    msg2.body = ('Product %s is below the threshold quantity')
-    mail.send(msg2)
     request_count = ProductRequest.query.count()
     team_pse_request = ProductRequest.query.filter_by(team="pse")
     team_pse_count = (team_pse_request.count())
