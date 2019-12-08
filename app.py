@@ -168,11 +168,12 @@ def product():
         data = request.form
         product = Product(name=data.get("name"), type=data.get("type"), mrp=data.get("mrp"), description=data.get(
             "description"), threshold=data.get("threshold"),dateadded=str(datetime.datetime.now()), dateupdated=str(datetime.datetime.now()), language=data.get("language"), version=data.get("version"))
-        if 'file_url' in request.files and file_url != '':
+        if 'file_url' in request.files:
             file_url = request.files['file_url']
-            filename = secure_filename(file_url.filename)
-            file_url.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            product.file_url = filename
+            if file_url != '':
+                filename = secure_filename(file_url.filename)
+                file_url.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                product.file_url = filename
         db.session.add(product)
         db.session.commit()
     products = Product.query.order_by(Product.dateupdated.desc())
