@@ -172,6 +172,7 @@ def product():
             file_url = request.files['file_url']
             if file_url != '':
                 filename = secure_filename(file_url.filename)
+                print('FILE URL: ', file_url)
                 file_url.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 product.file_url = filename
         db.session.add(product)
@@ -461,9 +462,9 @@ def quarterly_product_requests():
 
 
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0')
-
-
 # if __name__ == "__main__":
-#     app.run(debug=True)
+#     app.run(host='0.0.0.0')
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
