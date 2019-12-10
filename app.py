@@ -38,9 +38,9 @@ def load_user(id):
 
 LOW_STOCK_THRESHOLD = 100
 msg = Message("Dear Admin, An order has been placed, please place a purchase order", sender="arpaninventorymanagement@gmail.com",
-              recipients=["adit.ganapathy@oberoi-is.net", "arnavanytime@gmail.com"])
+              recipients=[["fahim@arpan.org.in", "mayur@arpan.org.in"])
 
-msg2 = Message("Dear Team Manager, your quarterly stock is running low", sender="adit.ganapathy@outlook.com", recipients=["adit.ganapathy@oberoi-is.net", "arnavanytime@gmail.com"])
+msg2 = Message("Dear Team Manager, your quarterly stock is running low", sender="adit.ganapathy@outlook.com", recipients=["fahim@arpan.org.in", "mayur@arpan.org.in"])
 
 
 
@@ -172,7 +172,7 @@ def product():
             file_url = request.files['file_url']
             if file_url != '':
                 filename = secure_filename(file_url.filename)
-                print('FILE URL: ', file_url)
+                print('FILE URL: ', file_url)# TODO image upload not working
                 file_url.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 product.file_url = filename
         db.session.add(product)
@@ -208,6 +208,15 @@ def product_edit(product_id):
     vendors = Vendor.query.all()
 
     return render_template("product-edit.html", product=product, vendors=vendors)
+
+# @app.route("/delete-product/<product_id>")
+# def delete_product(product_id):
+#     product = Product.query.filter_by(id=product_id).first()
+#     inventory = Inventory.query.filter_by(product_id=product_id).first()
+#     # db.session.delete(inventory)
+#     db.session.delete(product)
+#     db.session.commit()
+#     return redirect("/products")
 
 
 @app.route("/users", methods=["GET", "POST"])
@@ -462,9 +471,9 @@ def quarterly_product_requests():
 
 
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0')
-
-
 # if __name__ == "__main__":
-#     app.run(debug=True)
+#     app.run(host='0.0.0.0')
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
