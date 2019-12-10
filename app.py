@@ -38,7 +38,7 @@ def load_user(id):
 
 LOW_STOCK_THRESHOLD = 100
 msg = Message("Dear Admin, An order has been placed, please place a purchase order", sender="arpaninventorymanagement@gmail.com",
-              recipients=[["fahim@arpan.org.in", "mayur@arpan.org.in"])
+              recipients=["fahim@arpan.org.in", "mayur@arpan.org.in"])
 
 msg2 = Message("Dear Team Manager, your quarterly stock is running low", sender="adit.ganapathy@outlook.com", recipients=["fahim@arpan.org.in", "mayur@arpan.org.in"])
 
