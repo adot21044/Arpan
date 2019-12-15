@@ -167,7 +167,7 @@ def product():
         print(request.form)
         data = request.form
         product = Product(name=data.get("name"), type=data.get("type"), mrp=data.get("mrp"), description=data.get(
-            "description"), threshold=data.get("threshold"),dateadded=str(datetime.datetime.now()), dateupdated=str(datetime.datetime.now()), language=data.get("language"), version=data.get("version"))
+            "description"), threshold=data.get("threshold"),dateadded=str(datetime.datetime.now()), dateupdated=str(datetime.datetime.now()), language=data.get("language"), version=data.get("version"), vendor=data.get("vendor"))
         if 'file_url' in request.files and data.get("file_url", '') != '':
             file_url = request.files['file_url']
             if file_url != '':
