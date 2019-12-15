@@ -239,7 +239,7 @@ def users():
 def vendor():
     if request.form:
         data = request.form
-        vendor = Vendor(name=data.get("Name"), city=data.get("city"), GST=data.get("gst"), contact_person=data.get
+        vendor = Vendor(name=data.get("Name"), city=data.get("city"), gst_number=data.get("gst"), contact_person=data.get
                         ("contact_person"), contact_number=str(data.get("contact_number")), remarks=data.get("remarks"))
         db.session.add(vendor)
         db.session.commit()

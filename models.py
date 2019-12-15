@@ -65,7 +65,7 @@ class Vendor(db.Model):
     id= db.Column(db.Integer, primary_key=True, autoincrement=True)
     name= db.Column(db.String(50), nullable=False)
     city= db.Column(db.String(20), nullable=False)
-    GST= db.Column(db.Integer, nullable=False) # TODO ask if this is correct
+    gst_number = db.Column(db.String(16), nullable=True) # TODO ask if this is correct
     contact_person= db.Column(db.String(100), nullable=False)
     contact_number= db.Column(db.String(12), nullable=True)
     remarks= db.Column(db.String(200), nullable=True)
