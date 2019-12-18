@@ -390,6 +390,25 @@ def delete_purchase_order(request_id):
     return redirect("/purchase-orders")
 
 
+@app.route("/purchase-order_edit/<request_id>", methods=["GET", "POST"])
+def purchase_order_edit(request_id):
+    purchase_orders = PurchaseOrders.query.filter_by(id=request_id).first()
+    if request.form:
+        data = request.form
+        purchase_orders.name = data.get("name")
+        purchase_orders.quantity=data.get("quantity")
+        purchase_orders.price=data.get("price")
+        purchase_orders.vendor=data.get("vendor")
+        purchase_orders.remarks=data.get("remarks")
+        purchase_orders.dateplaced=data.get("dateplaced")
+        purchase_orders.status=data.get("status")
+        db.session.commit()
+        return redirect("/purchase-orders")
+    vendors = Vendor.query.all()
+    product= Product.query.all
+    return render_template("purchase_order_edit.html", product=product, vendors=vendors)  
+
+
 @app.route("/monthly-report")
 def monthly_report():
     product_requests = ProductRequest.query.all()
@@ -465,15 +484,18 @@ def quarterly_product_requests():
     products = Product.query.all()
     quarterly_requests = QuarterlyRequest.query.filter_by(team=current_user.team).order_by(
         QuarterlyRequest.date.desc())
+    msg = Message("Dear Admin, An order has been placed, please place a purchase order", sender="arpaninventorymanagement@gmail.com",
+              recipients=["fahim@arpan.org.in", "mayur@arpan.org.in"])    
+    msg.body = ('A quarterly request has been made by a team, please purchase purchase order')
     mail.send(msg)
     return render_template("quarterlyproductrequests.html", products=products, quarterly_requests=quarterly_requests)
 
 
 
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0')
-
-
 # if __name__ == "__main__":
-#     app.run(debug=True)
+#     app.run(host='0.0.0.0')
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

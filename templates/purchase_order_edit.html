@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-8">
+    
+        <div class="card" style="padding:24px">
+            <div class="card-header">
+                <h4>Purchase Order</h4>
+            </div>
+            <div class="card-body">
+                <form action="/purchase-order_edit/{{request.id}}" method="POST" enctype=multipart/form-data> <div class="form-group">
+                    <label for="name">Purchase Order</label>
+
+                        <label for="name">Existing Product</label>
+                        
+                        <select name="product" id="product" class="form-control">
+                                {%for product in products %}
+                                <option value="{{product.id}}">{{product.name}}-{{product.language}}</option>
+                                {%endfor%}
+                            </select>
+                    </div>
+                    <div class="form-group">
+                            <label for="quantity">Quantity</label>
+                            <input type="number" name="quantity" class="form-control">
+                        
+                        </div>
+
+                        <div class="form-group">
+                            <label for="price">Price(INR)</label>
+                            <input type="number" name="price" class="form-control">
+                         </div>
+
+                         <div class="form-group">
+                                <label for="vendor">Vendor</label>
+                                <select name="vendor" id="vendor" class="form-control">
+                                       {% for vendor in vendors%}
+                                       <option value="{{vendor.id}}">{{vendor.name}}</option>
+                                       {%endfor%}
+                                </select>
+                           </div>
+                        
+                         <div class="form-group">
+                             <label for="remarks">Remarks</label>
+                            <input type="text" name="remarks" class="form-control">
+                        
+
+                         </div>
+
+                         
+
+                        <div class="form-group">
+                            <label for="dateplaced">Date Placed</label>
+                            <input type="date" name="dateplaced" class="form-control">
+                    
+
+                        </div>
+
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select name="status" class="form-control">
+                                <option value="accepted">Accepted</option>
+                                <option value="declined">Declined</option>
+                                <option value="inproduction">In Production</option>
+                            </select>
+
+                        </div>
+
+                         
+                      
+
+                         <input type="submit" value="Update" class="btn btn-fill btn-danger"> 
+
+                    </div>
+                    
+                   
+                
+
+                   
+                    
+                
+                    
+                
+                </form>
+            </div>
+        </div>
+    
+    
+        {% endblock %}

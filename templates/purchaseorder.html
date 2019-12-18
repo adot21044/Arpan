@@ -149,6 +149,7 @@
                                             <th>{{order.date_added}}</th>
                                             <th>{{order.status}}</th>
                                             <th><a href="/delete-purchase-order/{{order.id}}" onclick="return confirm('Are you sure you want to delete?')">Delete</a></th>
+                                            <th><a href="/purchase-order_edit/{{order.id}}" onclick="return confirm('Would you like to edit this order?')">Edit</a></th>
 
                                         </tr>
                                         {%endfor%}
@@ -200,14 +201,13 @@
                             </thead>
         
                             <tbody>
-                                {% for quarterly_request in quarterly_requests%}
+                                {% for data,quantity in product_data%}
                                 <tr>
-                                    <th>{{quarterly_request.master_product.name}} - {{quarterly_request.master_product.language}}</th>
-                                    <th>{{quarterly_request.quantity}}</th>
-                                    <th>{{quarterly_request.team}}</th>
-                                    <th>{{quarterly_request.date}}</th>
-                                    <th>{{quarterly_request.quarter_month}} - {{quarterly_request.year}}</th>
-                                    <!-- <th><a href="/delete-product-request/{{quarterly_request.id}}" onclick="return confirm('Are you sure you want to delete this order?')">Delete</a></th> -->
+                                    <th>{{data}}</th>
+                                    <th>{{quantity}}</th>
+                                    <th>{{request.team}}</th>
+                                    <th>{{request.date}}</th>
+                                    <th>{{request.quarter}} - {{request.year}}</th>
                                 </tr>
                                 {%endfor%}
                             </tbody>
