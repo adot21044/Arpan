@@ -403,7 +403,7 @@ def purchase_order_edit(request_id):
         purchase_orders.dateplaced=data.get("dateplaced")
         purchase_orders.status=data.get("status")
         db.session.commit()
-        return redirect("/purchase-orders")
+        return redirect(url_for('purchase_order'))
     vendors = Vendor.query.all()
     product= Product.query.all
     return render_template("purchase_order_edit.html", product=product, vendors=vendors)  
@@ -493,9 +493,9 @@ def quarterly_product_requests():
 
 
 
-# if __name__ == "__main__":
-#     app.run(host='0.0.0.0')
-
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0')
+
+
+# if __name__ == "__main__":
+#     app.run(debug=True)
