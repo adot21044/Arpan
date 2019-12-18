@@ -390,7 +390,7 @@ def delete_purchase_order(request_id):
     return redirect("/purchase-orders")
 
 
-@app.route("/purchase-order_edit/<request_id>", methods=["GET", "POST"])
+@app.route("/purchase-order_edit<request_id>", methods=["GET", "POST"])
 def purchase_order_edit(request_id):
     purchase_orders = PurchaseOrders.query.filter_by(id=request_id).first()
     if request.form:
