@@ -234,6 +234,13 @@ def users():
 
     return render_template("users.html", users=users)
 
+@app.route("/delete-user/<user_id>")
+def delete_user(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    db.session.delete(user)
+    db.session.commit()
+    return redirect("/users")
+
 
 @app.route("/vendors", methods=["GET", "POST"])
 def vendor():
@@ -327,6 +334,24 @@ def team_product_request():
     quarterly_requests = QuarterlyRequest.query.filter_by(team=current_user.team).order_by(QuarterlyRequest.date.desc())
     return render_template("teamproductrequest.html", products=products, product_requests=product_requests, quarterly_requests=quarterly_requests)
 
+@app.route("/team-product-requests_edit<request_id>", methods=["GET", "POST"])
+def team_delete_product_requests(request_id):
+    product_request = ProductRequest.query.filter_by(id=request_id).first()
+    if request.form:
+        data = request.form
+        product_request.name = data.get("name")
+        product_request.quantity=data.get("quantity")
+        product_request.price=data.get("price")
+        product_request.vendor=data.get("vendor")
+        product_request.remarks=data.get("remarks")
+        product_request.dateplaced=data.get("dateplaced")
+        product_request.status=data.get("status")
+        db.session.commit()
+        return redirect(url_for('purchase_order'))
+    vendors = Vendor.query.all()
+    product= Product.query.all
+    return render_template("purchase_order_edit.html", product=product, vendors=vendors)  
+
 
 @app.route("/delete-product-request/<request_id>")
 def delete_product_request(request_id):
@@ -389,6 +414,13 @@ def delete_purchase_order(request_id):
     db.session.commit()
     return redirect("/purchase-orders")
 
+@app.route("/delete-product/<product_id>")
+def delete_product(product_id):
+    product = Product.query.filter_by(id=product_id).first()
+    db.session.delete(product)
+    db.session.commit()
+    return redirect("/products")
+
 
 @app.route("/purchase-order_edit<request_id>", methods=["GET", "POST"])
 def purchase_order_edit(request_id):
@@ -400,13 +432,16 @@ def purchase_order_edit(request_id):
         purchase_orders.price=data.get("price")
         purchase_orders.vendor=data.get("vendor")
         purchase_orders.remarks=data.get("remarks")
-        purchase_orders.dateplaced=data.get("dateplaced")
+        purchase_orders.date_added=data.get("date_added")
         purchase_orders.status=data.get("status")
         db.session.commit()
-        return redirect(url_for('purchase_order'))
+        return redirect(url_for('purchase_orders'))
     vendors = Vendor.query.all()
-    product= Product.query.all
-    return render_template("purchase_order_edit.html", product=product, vendors=vendors)  
+    products= Product.query.all()
+    print(purchase_orders.date_added)
+    date_added = purchase_orders.date_added.split(' ')[0]
+    print(purchase_orders.vendor)
+    return render_template("purchase_order_edit.html", products=products, vendors=vendors, purchase_order=purchase_orders, date_added=date_added)  
 
 
 @app.route("/monthly-report")

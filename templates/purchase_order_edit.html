@@ -10,7 +10,7 @@
                 <h4>Purchase Order</h4>
             </div>
             <div class="card-body">
-                <form action="/purchase-order_edit/{{request.id}}" method="POST" enctype=multipart/form-data> <div class="form-group">
+                <form action="/purchase-order_edit{{purchase_order.id}}" method="POST" enctype=multipart/form-data> <div class="form-group">
                     <label for="name">Purchase Order</label>
 
                         <label for="name">Existing Product</label>
@@ -23,18 +23,18 @@
                     </div>
                     <div class="form-group">
                             <label for="quantity">Quantity</label>
-                            <input type="number" name="quantity" class="form-control">
+                            <input type="number" name="quantity" class="form-control" value={{purchase_order.quantity}}>
                         
                         </div>
 
                         <div class="form-group">
                             <label for="price">Price(INR)</label>
-                            <input type="number" name="price" class="form-control">
+                            <input type="number" name="price" class="form-control" value="{{purchase_order.price}}">
                          </div>
 
                          <div class="form-group">
                                 <label for="vendor">Vendor</label>
-                                <select name="vendor" id="vendor" class="form-control">
+                                <select name="vendor" id="vendor" class="form-control" value="{{purchase_order.vendor}}">
                                        {% for vendor in vendors%}
                                        <option value="{{vendor.id}}">{{vendor.name}}</option>
                                        {%endfor%}
@@ -43,7 +43,7 @@
                         
                          <div class="form-group">
                              <label for="remarks">Remarks</label>
-                            <input type="text" name="remarks" class="form-control">
+                            <input type="text" name="remarks" class="form-control" value="{{purchase_order.remarks}}">
                         
 
                          </div>
@@ -51,8 +51,8 @@
                          
 
                         <div class="form-group">
-                            <label for="dateplaced">Date Placed</label>
-                            <input type="date" name="dateplaced" class="form-control">
+                            <label for="date_added">Date Placed</label>
+                            <input type="date" name="date_added" class="form-control" value="{{date_added}}">
                     
 
                         </div>
