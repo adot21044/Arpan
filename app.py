@@ -334,23 +334,24 @@ def team_product_request():
     quarterly_requests = QuarterlyRequest.query.filter_by(team=current_user.team).order_by(QuarterlyRequest.date.desc())
     return render_template("teamproductrequest.html", products=products, product_requests=product_requests, quarterly_requests=quarterly_requests)
 
-@app.route("/team-product-requests_edit<request_id>", methods=["GET", "POST"])
-def team_delete_product_requests(request_id):
-    product_request = ProductRequest.query.filter_by(id=request_id).first()
+@app.route("/product-request_edit<request_id>", methods=["GET", "POST"])
+def product_request_edit(request_id):
+    product_requests = ProductRequest.query.filter_by(id=request_id).first()
     if request.form:
         data = request.form
-        product_request.name = data.get("name")
-        product_request.quantity=data.get("quantity")
-        product_request.price=data.get("price")
-        product_request.vendor=data.get("vendor")
-        product_request.remarks=data.get("remarks")
-        product_request.dateplaced=data.get("dateplaced")
-        product_request.status=data.get("status")
+        product_requests.name = data.get("name")
+        product_requests.quantity=data.get("quantity")
+        product_requests.price=data.get("price")
+        product_requests.vendor=data.get("vendor")
+        product_requests.remarks=data.get("remarks")
+        product_requests.dateplaced=data.get("dateplaced")
+        product_requests.status=data.get("status")
         db.session.commit()
-        return redirect(url_for('purchase_order'))
+        return redirect(url_for('product_request'))
     vendors = Vendor.query.all()
-    product= Product.query.all
-    return render_template("purchase_order_edit.html", product=product, vendors=vendors)  
+    products= Product.query.all()
+    print(product_requests.product_id)
+    return render_template("product_request_edit.html", products=products, vendors=vendors, product_request=product_requests)  
 
 
 @app.route("/delete-product-request/<request_id>")
@@ -400,7 +401,15 @@ def purchase_orders():
     stock = PurchaseOrders.query.order_by(PurchaseOrders.date_added.desc())
     products = Product.query.all()
     vendors = Vendor.query.all()
-    return render_template("purchaseorder.html", stock=stock, products=products, vendors=vendors)
+    top_productdata = dict()
+    total_requests = QuarterlyRequest.query.all()
+    # No filter applied
+    for pr in total_requests:
+        product_name = pr.master_product.name +' - '+ str(pr.master_product.language)
+        top_productdata[product_name] = top_productdata.get(product_name, 0)+pr.quantity
+    product_data = (sorted(top_productdata.items(),
+                           key=lambda x: x[1], reverse=True))
+    return render_template("purchaseorder.html", stock=stock, products=products, vendors=vendors,product_data = product_data)
 
 
 @app.route("/delete-purchase-order/<request_id>")
@@ -528,9 +537,9 @@ def quarterly_product_requests():
 
 
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0')
-
-
 # if __name__ == "__main__":
-#     app.run(debug=True)
+#     app.run(host='0.0.0.0')
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

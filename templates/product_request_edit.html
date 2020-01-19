@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+    
+        <div class="card" style="padding:24px">
+            <div class="card-header">
+                <h2>Day to Day Requests</h2>
+            </div>
+            <div class="card-body">
+                <form action="/product-request_edit{{product_request.id}}" method="POST" enctype=multipart/form-data> <div class="form-group">
+                        <label for="Name">Product</label>
+                        <select name="product" id="product" class="form-control" value="{{product_request.product_id}}">
+                                {%for product in products %}
+                                    <option value="{{product.id}}" {% if product.id==product_request.product_id %} selected {%endif%}>{{product.name}} - {{product.language}}</option>
+                                {%endfor%}
+                            </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="quantity">Quantity</label>
+                        <input type="number" name="quantity" class="form-control" value="{{product_request.quantity}}">
+                    
+                    </div>
+
+                    <div class="form-group">
+                        <label for="team">Team</label>
+                        <select name="team" id="team" class="form-control" value="{{product_request.team}}">
+                            <option value="pse" {% if "pse"==product_request.team %} selected {%endif%}>PSE Team</option>
+                            <option value="pe" {% if "pe"==product_request.team %} selected {%endif%}>Public Engagement Team</option>
+                            <option value="training" {% if "training"==product_request.team %} selected {%endif%}>Training Teams</option>
+                            <option value="other" {% if "other"==product_request.team %} selected {%endif%}>Other</option>
+                        </select>
+
+                
+                    </div>
+                   
+
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date"name="date" class="form-control" id="request-date" value="{{product_request.date}}">
+                    </div>
+
+                    
+
+                    <div class="form-group">
+                            <label for="contact_person">Contact Person</label>
+                            <input type="text"name="contact_person" class="form-control" value="{{product_request.contact_person}}">
+    
+                    </div>
+                    
+                        <div class="form-group">
+                                <label for="contact_number">Contact Number</label>
+                                <input type="number"name="contact_number" class="form-control" value="{{product_request.contact_number}}">
+        
+                        </div>
+
+                    <div class="form-group">
+                        <label for="organisation">Organisation</label>
+                        <input type="text" name="organisation" class="form-control" value="{{product_request.organisation}}">
+
+                    </div>
+                
+                    <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" name="city" class="form-control" value="{{product_request.city}}">
+    
+                    </div>
+
+                    <div class="form-group">
+                            <label for="state">State</label>
+                            <input type="text" name="state" class="form-control" value="{{product_request.state}}">
+    
+                    </div>
+
+                    <div class="form-group">
+                            <label for="status">Request Status</label>
+    
+                            <select name="status" id="status" class="form-control">
+                                <option value="pending">Request Pending</option>
+                                <option value="fulfilled">Request Fulfilled</option>
+                            </select>
+    
+                        </div>
+
+                   
+                   
+                
+                    <input type="submit" value="Add" class="btn btn-fill btn-danger"> 
+                
+                    
+                
+                    
+                
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

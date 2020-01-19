@@ -34,8 +34,8 @@ class Product(db.Model):
 class Inventory(db.Model):
     
     __tablename__="inventories"
-    product_id= db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
-    master_product= db.relationship("Product", foreign_keys=product_id)
+    product_id= db.Column(db.Integer, db.ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
+    master_product= db.relationship("Product", foreign_keys=product_id, passive_deletes=True)
     quantity= db.Column(db.Integer)
     id= db.Column(db.Integer, primary_key=True, autoincrement=True)
     description= db.Column(db.String(255), nullable=True)
@@ -74,8 +74,8 @@ class Vendor(db.Model):
 class ProductRequest(db.Model):
     __tablename__="product_request"
     id= db.Column(db.Integer, primary_key=True, autoincrement=True)
-    product_id= db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
-    master_product= db.relationship("Product", foreign_keys=product_id)
+    product_id= db.Column(db.Integer, db.ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
+    master_product= db.relationship("Product", foreign_keys=product_id, passive_deletes=True)
     quantity= db.Column(db.Integer, nullable=False)
     user_id= db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     user= db.relationship("User", foreign_keys=user_id)
@@ -93,8 +93,8 @@ class PurchaseOrders(db.Model):
     
     __tablename__="purchase_orders"
     id= db.Column(db.Integer, primary_key=True, autoincrement=True)
-    product_id= db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
-    master_product= db.relationship("Product", foreign_keys=product_id)
+    product_id= db.Column(db.Integer, db.ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
+    master_product= db.relationship("Product", foreign_keys=product_id, passive_deletes=True)
     quantity= db.Column(db.Integer)
     price= db.Column(db.Integer, nullable=False)    
     vendor= db.Column(db.Integer, db.ForeignKey("vendors.id"), nullable=False)
@@ -108,8 +108,8 @@ class PurchaseOrders(db.Model):
 class QuarterlyRequest(db.Model):
     __tablename__="quarterly_request"
     id= db.Column(db.Integer, primary_key=True, autoincrement=True)
-    product_id= db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
-    master_product= db.relationship("Product", foreign_keys=product_id)
+    product_id= db.Column(db.Integer, db.ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
+    master_product= db.relationship("Product", foreign_keys=product_id, passive_deletes=True)
     quantity= db.Column(db.Integer, nullable=False)
     user_id= db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     user= db.relationship("User", foreign_keys=user_id)
