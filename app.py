@@ -287,7 +287,7 @@ def product_request():
     if request.form:
         data = request.form
         product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
-            user_id=current_user.id, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation"), city=data.get("city", ""), state=data.get("state"), team=data.get("team"))
+            user_id=current_user.id, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=data.get("team"))
 
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(
@@ -314,7 +314,7 @@ def team_product_request():
     if request.form:
         data = request.form
         product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
-            user_id=current_user.id, date=data.get("date"), status="pending", organisation=data.get("organisation"), city=data.get("city", ""), state=data.get("state"), team=current_user.team)
+            user_id=current_user.id, date=data.get("date"), status="pending", organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=current_user.team)
 
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(
@@ -465,7 +465,7 @@ def monthly_report():
             result_data["date"] = pr.date
             result_data["organisation"] = pr.organisation
             result_data["PO name"] = pr.user.email
-            result_data["purpose"] = pr.state
+            result_data["returns"] = pr.returns
             result_data["medium"] = pr.master_product.language
             result_data["materials"] = pr.master_product.name
             result_data["quantity"] = pr.quantity

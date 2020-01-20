@@ -84,7 +84,7 @@ class ProductRequest(db.Model):
     status= db.Column(db.String(30), nullable=False)
     organisation= db.Column(db.String(100), nullable=True)
     city= db.Column(db.String(50), nullable=True)
-    state= db.Column(db.String(50), nullable=True)
+    returns= db.Column(db.String(50), nullable=True)
     team=db.Column(db.String(100), nullable=True)
 
 

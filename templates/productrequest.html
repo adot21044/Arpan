@@ -76,8 +76,8 @@
                     </div>
 
                     <div class="form-group">
-                            <label for="state">Purpose</label>
-                            <input type="text" name="state" class="form-control">
+                            <label for="returns">Return Quantity</label>
+                            <input type="text" name="returns" class="form-control">
     
                     </div>
 
@@ -138,7 +138,7 @@
                             City
                         </th>
                         <th>
-                            State
+                            Returns
                         </th>
                         <th>
                             Delete?
@@ -159,7 +159,7 @@
                             <th>{{product_request.contact_person}}</th>
                             <th>{{product_request.organisation}}</th> 
                             <th>{{product_request.city}}</th>
-                            <th>{{product_request.state}}</th>
+                            <th>{{product_request.returns}}</th>
                             <th><a href="/delete-product-request/{{product_request.id}}" onclick="return confirm('Are you sure you want to delete this order?')">Delete</a></th>
                             <th><a href="/product-request_edit{{product_request.id}}" onclick="return confirm('Would you like to edit this order?')">Edit</a></th>
 
