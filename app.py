@@ -287,7 +287,7 @@ def product_request():
     if request.form:
         data = request.form
         product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
-                                         user_id=current_user.id, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation"), city=data.get("city", ""), state=data.get("state"), team=data.get("team"))
+            user_id=current_user.id, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation"), city=data.get("city", ""), state=data.get("state"), team=data.get("team"))
 
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(
@@ -537,9 +537,9 @@ def quarterly_product_requests():
 
 
 
-# if __name__ == "__main__":
-#     app.run(host='0.0.0.0')
-
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0')
+
+
+# if __name__ == "__main__":
+#     app.run(debug=True)

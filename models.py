@@ -111,7 +111,7 @@ class QuarterlyRequest(db.Model):
     product_id= db.Column(db.Integer, db.ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
     master_product= db.relationship("Product", foreign_keys=product_id, passive_deletes=True)
     quantity= db.Column(db.Integer, nullable=False)
-    user_id= db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_id= db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     user= db.relationship("User", foreign_keys=user_id)
     # master_vendor= db.relationship("Vendor", foreign_keys=product_id)
     date= db.Column(db.String(30), nullable=False)
