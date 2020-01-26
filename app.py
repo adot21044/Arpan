@@ -292,6 +292,7 @@ def product_request():
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(
                 product_id=data.get("product")).first()
+            quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=data.get("product"), team=data.get("team"))
             if inventory is not None:
                 inventory.quantity = inventory.quantity - \
                     int(data.get("quantity"))
@@ -299,6 +300,9 @@ def product_request():
                     msg2 = Message("Dear Admin, your inventory stock is running low", sender="adit.ganapathy@outlook.com", recipients=["adit.ganapathy@oberoi-is.net", "arnavanytime@gmail.com"])
                     msg2.body = ('Product %s is below the threshold quantity' % product_request.master_product.threshold)
                     mail.send(msg2)
+                if quarterly_product_request.quantity < 50:
+                    mail.send(msg)
+                quarterly_product_request.quantity = quarterly_product_request.quantity - product_request.quantity    
                 db.session.add(inventory)
         db.session.add(product_request)
         db.session.commit()
@@ -325,6 +329,7 @@ def team_product_request():
                 if inventory.quantity < LOW_STOCK_THRESHOLD:
                     # mail.send(msg) TODO
                     pass
+                quarterly_product_request.quantity = quarterly_product_request.quantity - product_request.quantity    
                 db.session.add(inventory)
         db.session.add(product_request)
         db.session.commit()
@@ -361,6 +366,7 @@ def delete_product_request(request_id):
     if productrequest.status == "fulfilled":
         inventory = Inventory.query.filter_by(product_id=product_id).first()
         inventory.quantity = inventory.quantity + productrequest.quantity
+        quarterly_product_request.quantity = quarterly_product_request + productrequest.quantity
     db.session.delete(productrequest)
     db.session.commit()
     return redirect("/product-requests")
@@ -373,6 +379,7 @@ def team_delete_product_request(request_id):
     if productrequest.status == "fulfilled":
         inventory = Inventory.query.filter_by(product_id=product_id).first()
         inventory.quantity = inventory.quantity + productrequest.quantity
+        quarterly_product_request.quantity = quarterly_product_request + productrequest.quantity
     db.session.delete(productrequest)
     db.session.commit()
     return redirect("/team-product-requests")
@@ -528,10 +535,12 @@ def quarterly_product_requests():
     products = Product.query.all()
     quarterly_requests = QuarterlyRequest.query.filter_by(team=current_user.team).order_by(
         QuarterlyRequest.date.desc())
+    quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=data.get("product"), team=data.get("team")).first()
     msg = Message("Dear Admin, An order has been placed, please place a purchase order", sender="arpaninventorymanagement@gmail.com",
               recipients=["fahim@arpan.org.in", "mayur@arpan.org.in"])    
     msg.body = ('A quarterly request has been made by a team, please purchase purchase order')
     mail.send(msg)
+    inventory.quantity = inventory.quantity + quarterly_product_request.quantity
     return render_template("quarterlyproductrequests.html", products=products, quarterly_requests=quarterly_requests)
 
 
