@@ -535,12 +535,12 @@ def quarterly_product_requests():
     products = Product.query.all()
     quarterly_requests = QuarterlyRequest.query.filter_by(team=current_user.team).order_by(
         QuarterlyRequest.date.desc())
-    quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=data.get("product"), team=data.get("team")).first()
+    # quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=data.get("product"), team=data.get("team")).first()
     msg = Message("Dear Admin, An order has been placed, please place a purchase order", sender="arpaninventorymanagement@gmail.com",
               recipients=["fahim@arpan.org.in", "mayur@arpan.org.in"])    
     msg.body = ('A quarterly request has been made by a team, please purchase purchase order')
     mail.send(msg)
-    inventory.quantity = inventory.quantity + quarterly_product_request.quantity
+    # inventory.quantity = inventory.quantity + quarterly_product_request.quantity
     return render_template("quarterlyproductrequests.html", products=products, quarterly_requests=quarterly_requests)
 
 
