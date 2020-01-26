@@ -288,11 +288,11 @@ def product_request():
         data = request.form
         product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
             user_id=current_user.id, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=data.get("team"))
-
+        db.session.add(product_request)
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(
                 product_id=data.get("product")).first()
-            quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=data.get("product"), team=data.get("team"))
+            quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=data.get("product"), team=data.get("team")).first()
             if inventory is not None:
                 inventory.quantity = inventory.quantity - \
                     int(data.get("quantity"))
@@ -304,7 +304,7 @@ def product_request():
                     mail.send(msg)
                 quarterly_product_request.quantity = quarterly_product_request.quantity - product_request.quantity    
                 db.session.add(inventory)
-        db.session.add(product_request)
+                db.session.add(quarterly_product_request)
         db.session.commit()
     products = Product.query.all()
     product_requests = ProductRequest.query.order_by(
@@ -324,6 +324,7 @@ def team_product_request():
             inventory = Inventory.query.filter_by(
                 product_id=data.get("product")).first()
             if inventory is not None:
+                quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=data.get("product"), team=data.get("team")).first()
                 inventory.quantity = inventory.quantity - \
                     int(data.get("quantity"))
                 if inventory.quantity < LOW_STOCK_THRESHOLD:
@@ -364,6 +365,7 @@ def delete_product_request(request_id):
     productrequest = ProductRequest.query.filter_by(id=request_id).first()
     product_id = productrequest.product_id
     if productrequest.status == "fulfilled":
+        quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=product_id, team=product_request.team).first()
         inventory = Inventory.query.filter_by(product_id=product_id).first()
         inventory.quantity = inventory.quantity + productrequest.quantity
         quarterly_product_request.quantity = quarterly_product_request + productrequest.quantity
