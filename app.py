@@ -299,9 +299,9 @@ def logout():
 def product_request():
     if request.form:
         data = request.form
-        product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
+        product_request_incoming = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
             user_id=current_user.id, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=data.get("team"))
-        db.session.add(product_request)
+        db.session.add(product_request_incoming)
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(
                 product_id=data.get("product")).first()
@@ -309,14 +309,14 @@ def product_request():
             if inventory is not None:
                 inventory.quantity = inventory.quantity - \
                     int(data.get("quantity"))
-                if inventory.quantity < product_request.master_product.threshold:
+                if inventory.quantity < product_request_incoming.master_product.threshold:
                     msg2 = Message("Dear Admin, your inventory stock is running low", sender="adit.ganapathy@outlook.com", recipients=["adit.ganapathy@oberoi-is.net", "arnavanytime@gmail.com"])
-                    msg2.body = ('Product %s is below the threshold quantity' % product_request.master_product.threshold)
+                    msg2.body = ('Product %s is below the threshold quantity' % product_request_incoming.master_product.threshold)
                     mail.send(msg2)
                 if quarterly_product_request is not None:
                     if quarterly_product_request.quantity < 50:
                         mail.send(msg)
-                    quarterly_product_request.quantity = quarterly_product_request.quantity - product_request.quantity    
+                    quarterly_product_request.quantity = quarterly_product_request.quantity - product_request_incoming.quantity    
                 db.session.add(inventory)
                 db.session.add(quarterly_product_request)
         db.session.commit()
