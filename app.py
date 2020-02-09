@@ -317,8 +317,8 @@ def product_request():
                     if quarterly_product_request.quantity < 50:
                         mail.send(msg)
                     quarterly_product_request.quantity = quarterly_product_request.quantity - product_request_incoming.quantity    
+                    db.session.add(quarterly_product_request)
                 db.session.add(inventory)
-                db.session.add(quarterly_product_request)
         db.session.commit()
     products = Product.query.all()
     product_requests = ProductRequest.query.order_by(
