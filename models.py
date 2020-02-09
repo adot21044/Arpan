@@ -59,7 +59,10 @@ class User(UserMixin,db.Model):
         self.password_hash=generate_password_hash(password)
     
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)        
+        return check_password_hash(self.password_hash, password)    
+
+    def reset_password(self, new_password):
+        self.password_hash=generate_password_hash(new_password)    
 
 class Vendor(db.Model):
     __tablename__="vendors"

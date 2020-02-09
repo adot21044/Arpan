@@ -241,6 +241,16 @@ def delete_user(user_id):
     db.session.commit()
     return redirect("/users")
 
+@app.route("/reset-password_<user_id>", methods=["GET", "POST"])
+def user_password_reset(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    if request.form:
+        data = request.form
+        new_password = data.get('password')
+        user.reset_password(new_password)
+        return redirect(url_for('users'))
+    return render_template('user-password-reset.html', user=user)
+
 
 @app.route("/vendors", methods=["GET", "POST"])
 def vendor():
