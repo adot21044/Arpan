@@ -382,7 +382,7 @@ def delete_product_request(request_id):
         quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=product_id, team=productrequest.team).first()
         inventory = Inventory.query.filter_by(product_id=product_id).first()
         inventory.quantity = inventory.quantity + productrequest.quantity
-        quarterly_product_request.quantity = quarterly_product_request + productrequest.quantity
+        quarterly_product_request.quantity = quarterly_product_request.quantity + productrequest.quantity
         db.session.add(quarterly_product_request)
         db.session.add(inventory)
     db.session.delete(productrequest)
