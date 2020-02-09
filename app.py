@@ -313,9 +313,10 @@ def product_request():
                     msg2 = Message("Dear Admin, your inventory stock is running low", sender="adit.ganapathy@outlook.com", recipients=["adit.ganapathy@oberoi-is.net", "arnavanytime@gmail.com"])
                     msg2.body = ('Product %s is below the threshold quantity' % product_request.master_product.threshold)
                     mail.send(msg2)
-                if quarterly_product_request.quantity < 50:
-                    mail.send(msg)
-                quarterly_product_request.quantity = quarterly_product_request.quantity - product_request.quantity    
+                if quarterly_product_request is not None:
+                    if quarterly_product_request.quantity < 50:
+                        mail.send(msg)
+                    quarterly_product_request.quantity = quarterly_product_request.quantity - product_request.quantity    
                 db.session.add(inventory)
                 db.session.add(quarterly_product_request)
         db.session.commit()
