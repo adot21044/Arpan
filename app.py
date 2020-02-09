@@ -378,10 +378,12 @@ def delete_product_request(request_id):
     productrequest = ProductRequest.query.filter_by(id=request_id).first()
     product_id = productrequest.product_id
     if productrequest.status == "fulfilled":
-        quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=product_id, team=product_request.team).first()
+        quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=product_id, team=productrequest.team).first()
         inventory = Inventory.query.filter_by(product_id=product_id).first()
         inventory.quantity = inventory.quantity + productrequest.quantity
         quarterly_product_request.quantity = quarterly_product_request + productrequest.quantity
+        db.session.add(quarterly_product_request)
+        db.session.add(inventory)
     db.session.delete(productrequest)
     db.session.commit()
     return redirect("/product-requests")
