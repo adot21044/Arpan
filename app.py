@@ -249,6 +249,8 @@ def user_password_reset(user_id):
         print(data)
         new_password = data.get('new_password')
         user.reset_password(new_password)
+        db.session.add(user)
+        db.session.commit()
         return redirect(url_for('users'))
     return render_template('user-password-reset.html', user=user)
 
@@ -560,9 +562,9 @@ def quarterly_product_requests():
 
 
 
-# if __name__ == "__main__":
-#     app.run(host='0.0.0.0')
-
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0')
+
+
+# if __name__ == "__main__":
+#     app.run(debug=True)
