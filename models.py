@@ -106,6 +106,7 @@ class PurchaseOrders(db.Model):
     date_added= db.Column(db.String(30), nullable=False)
     date_modified= db.Column(db.String(30), nullable=False)
     status=db.Column(db.String(30), nullable=False)
+    order_number=db.Column(db.String(30), nullable=True)
 
 
 class QuarterlyRequest(db.Model):

@@ -70,6 +70,11 @@
                             </select>
 
                         </div>
+                        <div class="form-group">
+                            <label for="ordernumber">Order Number</label>
+                            <input type="text" name="ordernumber" class="form-control">
+
+                        </div>
 
                          
                       
@@ -132,6 +137,9 @@
                                         <th>
                                             Status
                                         </th>
+                                        <th>
+                                            Order Number
+                                        </th>
                                        
             
                                     </tr>
@@ -148,6 +156,7 @@
                                             <th>{{order.remark}}</th>
                                             <th>{{order.date_added}}</th>
                                             <th>{{order.status}}</th>
+                                            <th>{{order.order_number}}</th>
                                             <th><a href="/delete-purchase-order/{{order.id}}" onclick="return confirm('Are you sure you want to delete?')">Delete</a></th>
                                             <th><a href="/purchase-order_edit{{order.id}}" onclick="return confirm('Would you like to edit this order?')">Edit</a></th>
 

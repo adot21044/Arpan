@@ -410,7 +410,7 @@ def purchase_orders():
 
         data = request.form
         purchase_orders = PurchaseOrders(product_id=data.get("product"), price=data.get("price"), vendor=data.get("vendor"), quantity=data.get(
-            "quantity"), remarks=data.get("remarks"), date_added=str(datetime.datetime.now()), date_modified=str(datetime.datetime.now()), status=data.get("status"))
+            "quantity"), remarks=data.get("remarks"), date_added=str(datetime.datetime.now()), date_modified=str(datetime.datetime.now()), status=data.get("status"), order_number=data.get("ordernumber"))
         if data.get("status") == "accepted":
             inventory = Inventory.query.filter_by(product_id=data.get(
                 "product"), vendor=data.get("vendor")).first()
@@ -469,6 +469,7 @@ def purchase_order_edit(request_id):
         purchase_orders.remarks=data.get("remarks")
         purchase_orders.date_added=data.get("date_added")
         purchase_orders.status=data.get("status")
+        purchase_orders.order_number=data.get("ordernumber")
         db.session.commit()
         return redirect(url_for('purchase_orders'))
     vendors = Vendor.query.all()
