@@ -485,7 +485,7 @@ def monthly_report():
     product_requests = ProductRequest.query.all()
     all_data = []
     for pr in product_requests:
-        pr_date = datetime.datetime.strptime(pr.date, '%Y-%m-%d').date()
+        pr_date = datetime.datetime.strptime(pr.date, '%Y/%m/%d').date()
         if pr.status == "fulfilled" and pr_date.month == datetime.datetime.now().month:
             result_data = dict()
             result_data["program"] = pr.team
