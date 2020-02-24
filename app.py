@@ -499,9 +499,10 @@ def monthly_report():
             result_data["medium"] = pr.master_product.language
             result_data["materials"] = pr.master_product.name
             result_data["quantity"] = pr.quantity
+            result_data["returns"] = pr.returns
             all_data.append(result_data)
     keys = ['program', 'date', 'organisation',
-            'PO name', 'purpose', 'medium', 'materials', 'quantity']
+            'PO name', 'purpose', 'medium', 'materials', 'quantity', 'returns']
     print(keys)
     csv_data = ''
     with open('Media/out.csv', 'w') as output_file:
