@@ -315,7 +315,7 @@ def product_request():
                     mail.send(msg2)
                 if quarterly_product_request is not None:
                     if quarterly_product_request.quantity < 50:
-                        mail.send(msg)
+                        send_mail("Quarterly Stock for %s is low, for team %s"%(product_request_incoming.master_product.name, data.get("team", '')), "Dear Admin, quarterly stock is running low")
                     quarterly_product_request.quantity = quarterly_product_request.quantity - product_request_incoming.quantity    
                     db.session.add(quarterly_product_request)
                 db.session.add(inventory)
@@ -567,7 +567,10 @@ def quarterly_product_requests():
     # inventory.quantity = inventory.quantity + quarterly_product_request.quantity
     return render_template("quarterlyproductrequests.html", products=products, quarterly_requests=quarterly_requests)
 
-
+def send_mail(subject, body):
+    msg = Message(subject=subject,body=body, sender="arpaninventorymanagement@gmail.com",
+              recipients=["fahim@arpan.org.in", "mayur@arpan.org.in"])    
+    mail.send(msg)
 
 
 if __name__ == "__main__":
