@@ -310,8 +310,7 @@ def product_request():
                 inventory.quantity = inventory.quantity - \
                     int(data.get("quantity"))
                 if inventory.quantity < product_request_incoming.master_product.threshold:
-                    msg2 = Message("Dear Admin, your inventory stock is running low", sender="adit.ganapathy@outlook.com", recipients=["adit.ganapathy@oberoi-is.net", "arnavanytime@gmail.com"])
-                    msg2.body = ('Product %s is below the threshold quantity' % product_request_incoming.master_product.threshold)
+                    msg2 = Message("Dear Admin, the quarterly stock for %s is running low" %(product_request_incoming.master_product, sender="arpaninventorymanagement@gmail.com",recipients=["fahim@arpan.org.in", "mayur@arpan.org.in"])                    msg2.body = ('Product %s is below the threshold quantity' % product_request_incoming.master_product.threshold)
                     mail.send(msg2)
                 if quarterly_product_request is not None:
                     if quarterly_product_request.quantity < 50:
