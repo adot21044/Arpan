@@ -300,7 +300,7 @@ def product_request():
     if request.form:
         data = request.form
         product_request_incoming = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
-            user_id=current_user.id, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=data.get("team"))
+            user_id=current_user.id, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=data.get("team"), contact_person=data.get("contact_person"))
         db.session.add(product_request_incoming)
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(
@@ -310,8 +310,8 @@ def product_request():
                 inventory.quantity = inventory.quantity - \
                     int(data.get("quantity"))
                 if inventory.quantity < product_request_incoming.master_product.threshold:
-                    msg2 = Message("Dear Admin, the quarterly stock for %s is running low" %(product_request_incoming.master_product, sender="arpaninventorymanagement@gmail.com",recipients=["fahim@arpan.org.in", "mayur@arpan.org.in"])                    msg2.body = ('Product %s is below the threshold quantity' % product_request_incoming.master_product.threshold)
-                    mail.send(msg2)
+                    msg3 = Message("Dear Admin, A daily request has been made by a team member, please fulfil the order request at the earliest.", sender="arpaninventorymanagement@gmail.com",recipients=["fahim@arpan.org.in", "mayur@arpan.org.in"])                    msg2.body = ('Product %s is below the threshold quantity' % product_request_incoming.master_product.threshold)
+                    mail.send(msg3)
                 if quarterly_product_request is not None:
                     if quarterly_product_request.quantity < 50:
                         send_mail("Quarterly Stock for %s is low, for team %s"%(product_request_incoming.master_product.name, data.get("team", '')), "Dear Admin, quarterly stock is running low")
@@ -331,8 +331,7 @@ def team_product_request():
     if request.form:
         data = request.form
         product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
-            user_id=current_user.id, date=data.get("date"), status="pending", organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=current_user.team)
-
+            user_id=current_user.id, date=data.get("date"), status="pending", organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=current_user.team, contact_person=data.get("contact_person"))
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(
                 product_id=data.get("product")).first()
