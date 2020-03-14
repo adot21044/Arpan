@@ -340,7 +340,7 @@ def team_product_request():
                 inventory.quantity = inventory.quantity - \
                     int(data.get("quantity"))
                 if inventory.quantity < LOW_STOCK_THRESHOLD:
-                    # mail.send(msg) TODO
+                    mail.send(msg2) TODO
                     pass
                 quarterly_product_request.quantity = quarterly_product_request.quantity - product_request.quantity    
                 db.session.add(inventory)
