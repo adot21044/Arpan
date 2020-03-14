@@ -310,7 +310,7 @@ def product_request():
                 inventory.quantity = inventory.quantity - \
                     int(data.get("quantity"))
                 if inventory.quantity < product_request_incoming.master_product.threshold:
-                    msg3 = Message("Dear Admin, A daily request has been made by a team member, please fulfil the order request at the earliest.", sender="arpaninventorymanagement@gmail.com",recipients=["fahim@arpan.org.in", "mayur@arpan.org.in"])                    msg2.body = ('Product %s is below the threshold quantity' % product_request_incoming.master_product.threshold)
+                    msg3 = Message("Dear Admin, A daily request has been made by a team member, please fulfil the order request at the earliest.", sender="arpaninventorymanagement@gmail.com",recipients=["fahim@arpan.org.in", "mayur@arpan.org.in"])                    
                     mail.send(msg3)
                 if quarterly_product_request is not None:
                     if quarterly_product_request.quantity < 50:
@@ -340,7 +340,7 @@ def team_product_request():
                 inventory.quantity = inventory.quantity - \
                     int(data.get("quantity"))
                 if inventory.quantity < LOW_STOCK_THRESHOLD:
-                    mail.send(msg2) TODO
+                    mail.send(msg2) 
                     pass
                 quarterly_product_request.quantity = quarterly_product_request.quantity - product_request.quantity    
                 db.session.add(inventory)
