@@ -101,12 +101,12 @@
                 </thead>
 
                 <tbody>
-                    {% for quarterly_request in quarterly_requests%}
+                    {% for data,quantity in product_data%}
                     <tr>
-                        <th>{{quarterly_request.master_product.name}} - {{quarterly_request.master_product.language}}</th>
-                        <th>{{quarterly_request.quantity}}</th>
-                        <th>{{quarterly_request.team}}</th>
-                        
+                        <th>{{data}}</th>
+                        <th>{{quantity}}</th>
+                        <th>{{request.team}}</th>
+                        <!-- <th>{{request.date}}</th> -->
                     </tr>
                     {%endfor%}
                 </tbody>
