@@ -210,11 +210,11 @@
                             </thead>
         
                             <tbody>
-                                {% for data,quantity,team in product_data%}
+                                {% for data,quantity in product_data%}
                                 <tr>
                                     <th>{{data}}</th>
                                     <th>{{quantity}}</th>
-                                    <th>{{team}}</th>
+                                    <th>{{request.team}}</th>
                                     <th>{{request.date}}</th>
                                     <th>{{request.quarter}} - {{request.year}}</th>
                                 </tr>
