@@ -300,7 +300,7 @@ def product_request():
     if request.form:
         data = request.form
         product_request_incoming = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
-            user_id=current_user.id, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=data.get("team"), contact_person=data.get("contact_person"))
+            user_id=current_user.id, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=data.get("team"))
         db.session.add(product_request_incoming)
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(
@@ -331,7 +331,7 @@ def team_product_request():
     if request.form:
         data = request.form
         product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
-            user_id=current_user.id, date=data.get("date"), status="pending", organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=current_user.team, contact_person=data.get("contact_person"))
+            user_id=current_user.id, date=data.get("date"), status="pending", organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=current_user.team)
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(
                 product_id=data.get("product")).first()
