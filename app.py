@@ -327,11 +327,17 @@ def product_request():
 
 @app.route("/team-product-requests", methods=["GET", "POST"])
 def team_product_request():
-
+    products = Product.query.all()
+    product_requests = ProductRequest.query.filter_by(team=current_user.team).order_by(
+        ProductRequest.date.desc())
+    quarterly_requests = QuarterlyRequest.query.filter_by(team=current_user.team).order_by(QuarterlyRequest.date.desc())
     if request.form:
         data = request.form
         product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
             user_id=current_user.id, date=data.get("date"), status="pending", organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=current_user.team)
+        quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=data.get("product"), team=current_user.team).first()
+        if quarterly_product_request is None:
+            return render_template("teamproductrequest.html", products=products, product_requests=product_requests, quarterly_requests=quarterly_requests, error='You don\'t have any Quarterly Request for the product, please place quarterly request first.')
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(
                 product_id=data.get("product")).first()
@@ -346,11 +352,7 @@ def team_product_request():
                 db.session.add(inventory)
         db.session.add(product_request)
         db.session.commit()
-    products = Product.query.all()
-    product_requests = ProductRequest.query.filter_by(team=current_user.team).order_by(
-        ProductRequest.date.desc())
-    quarterly_requests = QuarterlyRequest.query.filter_by(team=current_user.team).order_by(QuarterlyRequest.date.desc())
-    return render_template("teamproductrequest.html", products=products, product_requests=product_requests, quarterly_requests=quarterly_requests)
+    return render_template("teamproductrequest.html", products=products, product_requests=product_requests, quarterly_requests=quarterly_requests, error='')
 
 @app.route("/product-request_edit<request_id>", methods=["GET", "POST"])
 def product_request_edit(request_id):
@@ -571,9 +573,9 @@ def send_mail(subject, body):
     mail.send(msg)
 
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0')
-
-
 # if __name__ == "__main__":
-#     app.run(debug=True)
+#     app.run(host='0.0.0.0')
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
