@@ -9,6 +9,9 @@
                 <h2>Day to Day Requests</h2>
             </div>
             <div class="card-body">
+                <h4 style="color: red;">
+                    {{error}}
+                </h4>
                 <form action="/product-request_edit{{product_request.id}}" method="POST" enctype=multipart/form-data> <div class="form-group">
                         <label for="Name">Product</label>
                         <select name="product" id="product" class="form-control" value="{{product_request.product_id}}">
@@ -29,7 +32,7 @@
                         <select name="team" id="team" class="form-control" value="{{product_request.team}}">
                             <option value="pse" {% if "pse"==product_request.team %} selected {%endif%}>PSE Team</option>
                             <option value="pe" {% if "pe"==product_request.team %} selected {%endif%}>Public Engagement Team</option>
-                            <option value="training" {% if "training"==product_request.team %} selected {%endif%}>Training Teams</option>
+                            <option value="training_team" {% if "training_team"==product_request.team %} selected {%endif%}>Training Teams</option>
                             <option value="other" {% if "other"==product_request.team %} selected {%endif%}>Other</option>
                         </select>
 

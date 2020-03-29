@@ -300,16 +300,16 @@ def logout():
 @app.route("/product-requests", methods=["GET", "POST"])
 def product_request():
     products = Product.query.all()
-    product_requests = ProductRequest.query.filter_by(team=current_user.team).order_by(
+    product_requests = ProductRequest.query.order_by(
         ProductRequest.date.desc())
     quarterly_requests = QuarterlyRequest.query.filter_by(team=current_user.team).order_by(QuarterlyRequest.date.desc())
     if request.form:
         data = request.form
-        product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
+        product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),contact_person = data.get('contact_person', ''),
             user_id=current_user.id, date=data.get("date"), status="pending", organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=current_user.team)
         quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=data.get("product"), team=current_user.team).first()
         if quarterly_product_request is None:
-            return render_template("teamproductrequest.html", products=products, product_requests=product_requests, quarterly_requests=quarterly_requests, error='You don\'t have any Quarterly Request for the product, please place quarterly request first.')
+            return render_template("teamproductrequest.html", products=products, product_requests=product_requests, quarterly_requests=quarterly_requests, error='You don\'t have any Quarterly Request for the product, please place quarterly request first.') 
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(
                 product_id=data.get("product")).first()
@@ -322,9 +322,11 @@ def product_request():
                     pass
                 quarterly_product_request.quantity = quarterly_product_request.quantity - product_request.quantity    
                 db.session.add(inventory)
+            else:
+                return render_template("productrequest.html", products=products, product_requests=product_requests, error='You don\'t have any Inventory for the product, please place purchase order first to update Inventory.')
         db.session.add(product_request)
         db.session.commit()
-    return render_template("productrequest.html", products=products, product_requests=product_requests)
+    return render_template("productrequest.html", products=products, product_requests=product_requests, error='')
 
 
 @app.route("/team-product-requests", methods=["GET", "POST"])
@@ -335,7 +337,7 @@ def team_product_request():
     quarterly_requests = QuarterlyRequest.query.filter_by(team=current_user.team).order_by(QuarterlyRequest.date.desc())
     if request.form:
         data = request.form
-        product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
+        product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"), contact_person = data.get('contact_person', ''),
             user_id=current_user.id, date=data.get("date"), status="pending", organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=current_user.team)
         quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=data.get("product"), team=current_user.team).first()
         if quarterly_product_request is None:
@@ -359,21 +361,36 @@ def team_product_request():
 @app.route("/product-request_edit<request_id>", methods=["GET", "POST"])
 def product_request_edit(request_id):
     product_requests = ProductRequest.query.filter_by(id=request_id).first()
+    vendors = Vendor.query.all()
+    products = Product.query.all()
     if request.form:
         data = request.form
         product_requests.name = data.get("name")
-        product_requests.quantity=data.get("quantity")
+        product_requests.quantity=int(data.get("quantity"))
         product_requests.price=data.get("price")
         product_requests.vendor=data.get("vendor")
         product_requests.remarks=data.get("remarks")
         product_requests.dateplaced=data.get("dateplaced")
         product_requests.status=data.get("status")
+        if data.get("status") == "fulfilled":
+            inventory = Inventory.query.filter_by(
+                product_id=data.get("product")).first()
+            if inventory is not None:
+                quarterly_product_request_object = QuarterlyRequest.query.filter_by(product_id=data.get("product"), team=data.get("team")).first()
+                inventory.quantity = inventory.quantity - \
+                    int(data.get("quantity"))
+                if inventory.quantity < LOW_STOCK_THRESHOLD:
+                    mail.send(msg2) 
+                    pass
+                quarterly_product_request_object.quantity = int(quarterly_product_request_object.quantity) - product_requests.quantity    
+                db.session.add(inventory)
+                db.session.add(quarterly_product_request_object)
+            else:
+                return render_template("product_request_edit.html", products=products, vendors=vendors, product_request=product_requests, error='You don\'t have any Inventory for the product, please place purchase order first to update Inventory.')
         db.session.commit()
         return redirect(url_for('product_request'))
-    vendors = Vendor.query.all()
-    products= Product.query.all()
-    print(product_requests.product_id)
-    return render_template("product_request_edit.html", products=products, vendors=vendors, product_request=product_requests)  
+    
+    return render_template("product_request_edit.html", products=products, vendors=vendors, product_request=product_requests, error='')  
 
 
 @app.route("/delete-product-request/<request_id>")

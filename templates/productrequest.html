@@ -9,6 +9,9 @@
                 <h2>Day to Day Requests</h2>
             </div>
             <div class="card-body">
+                <h4 style="color: red;">
+                    {{error}}
+                </h4>
                 <form action="/product-requests" method="POST">
                     <div class="form-group">
                         <label for="Name">Product</label>
@@ -29,7 +32,7 @@
                         <select name="team" id="team" class="form-control">
                             <option value="pse">PSE Team</option>
                             <option value="pe">Public Engagement Team</option>
-                            <option value="training">Training Teams</option>
+                            <option value="training_team">Training Teams</option>
                             <option value="other">Other</option>
                         </select>
 
