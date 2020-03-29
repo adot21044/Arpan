@@ -89,6 +89,7 @@ class ProductRequest(db.Model):
     city= db.Column(db.String(50), nullable=True)
     returns= db.Column(db.String(50), nullable=True)
     team=db.Column(db.String(100), nullable=True)
+    contact_person= db.Column(db.String(100), nullable=True)
 
 
 

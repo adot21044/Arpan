@@ -158,7 +158,9 @@ def inventory():
         top_productdata[product_name] = top_productdata.get(product_name, 0)+pr.quantity
     product_data = (sorted(top_productdata.items(),
                            key=lambda x: x[1], reverse=True))
-    return render_template("inventory.html", stock=stock, products=products, product_data=product_data)
+    training_products= QuarterlyRequest.query.filter_by(team='training_team')
+
+    return render_template("inventory.html", stock=stock, products=products, product_data=product_data, training_products=training_products)
 
 
 @app.route("/products", methods=["GET", "POST"])
@@ -297,31 +299,31 @@ def logout():
 
 @app.route("/product-requests", methods=["GET", "POST"])
 def product_request():
+    products = Product.query.all()
+    product_requests = ProductRequest.query.filter_by(team=current_user.team).order_by(
+        ProductRequest.date.desc())
+    quarterly_requests = QuarterlyRequest.query.filter_by(team=current_user.team).order_by(QuarterlyRequest.date.desc())
     if request.form:
         data = request.form
-        product_request_incoming = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
-            user_id=current_user.id, date=data.get("date"), status=data.get("status"), organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=data.get("team"))
-        db.session.add(product_request_incoming)
+        product_request = ProductRequest(product_id=data.get("product"), quantity=data.get("quantity"),
+            user_id=current_user.id, date=data.get("date"), status="pending", organisation=data.get("organisation"), city=data.get("city", ""), returns=data.get("returns"), team=current_user.team)
+        quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=data.get("product"), team=current_user.team).first()
+        if quarterly_product_request is None:
+            return render_template("teamproductrequest.html", products=products, product_requests=product_requests, quarterly_requests=quarterly_requests, error='You don\'t have any Quarterly Request for the product, please place quarterly request first.')
         if data.get("status") == "fulfilled":
             inventory = Inventory.query.filter_by(
                 product_id=data.get("product")).first()
-            quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=data.get("product"), team=data.get("team")).first()
             if inventory is not None:
+                quarterly_product_request = QuarterlyRequest.query.filter_by(product_id=data.get("product"), team=data.get("team")).first()
                 inventory.quantity = inventory.quantity - \
                     int(data.get("quantity"))
-                if inventory.quantity < product_request_incoming.master_product.threshold:
-                    msg3 = Message("Dear Admin, A daily request has been made by a team member, please fulfil the order request at the earliest.", sender="arpaninventorymanagement@gmail.com",recipients=["fahim@arpan.org.in", "mayur@arpan.org.in"])                    
-                    mail.send(msg3)
-                if quarterly_product_request is not None:
-                    if quarterly_product_request.quantity < 50:
-                        send_mail("Quarterly Stock for %s is low, for team %s"%(product_request_incoming.master_product.name, data.get("team", '')), "Dear Admin, quarterly stock is running low")
-                    quarterly_product_request.quantity = quarterly_product_request.quantity - product_request_incoming.quantity    
-                    db.session.add(quarterly_product_request)
+                if inventory.quantity < LOW_STOCK_THRESHOLD:
+                    mail.send(msg2) 
+                    pass
+                quarterly_product_request.quantity = quarterly_product_request.quantity - product_request.quantity    
                 db.session.add(inventory)
+        db.session.add(product_request)
         db.session.commit()
-    products = Product.query.all()
-    product_requests = ProductRequest.query.order_by(
-        ProductRequest.date.desc())
     return render_template("productrequest.html", products=products, product_requests=product_requests)
 
 
@@ -435,7 +437,7 @@ def purchase_orders():
         top_productdata[product_name] = top_productdata.get(product_name, 0)+pr.quantity
     product_data = (sorted(top_productdata.items(),
                            key=lambda x: x[1], reverse=True))
-    return render_template("purchaseorder.html", stock=stock, products=products, vendors=vendors,product_data = product_data)
+    return render_template("purchaseorder.html", stock=stock, products=products, vendors=vendors, product_data = product_data)
 
 
 @app.route("/delete-purchase-order/<request_id>")
