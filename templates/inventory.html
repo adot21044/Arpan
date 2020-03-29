@@ -74,7 +74,7 @@
 <div class="col-md-4">
         <div class="card">
         <div class="header">
-            <h4 class="title">Cumilative Quarterly Requests</h4>
+            <h4 class="title">Cumulative Quarterly Requests</h4>
         </div>
         <div class="card-body table-responsive">
             <table class="table table-hover table-striped">
@@ -105,7 +105,7 @@
     </div>
     <div class="card">
         <div class="header">
-            <h4 class="title">Training Team Requests</h4>
+            <h4 class="title">Training Team Quarterly Requests</h4>
         </div>
         <div class="card-body table-responsive">
             <table class="table table-hover table-striped">
@@ -126,7 +126,100 @@
                 <tbody>
                     {% for data in training_products%}
                     <tr>
-                        <th>{{data.master_product.name}}</th>
+                        <th>{{data.master_product.name}}-{{data.master_product.language}}</th>
+                        <th>{{data.quantity}}</th>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card">
+        <div class="header">
+            <h4 class="title">PSE Quarterly Requests</h4>
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table table-hover table-striped">
+
+                <thead>
+                    <tr>
+                        <th>
+                            Product
+                        </th>
+
+                        <th>
+                            Quantity
+                        </th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for data in pse_products%}
+                    <tr>
+                        <th>{{data.master_product.name}}-{{data.master_product.language}}</th>
+                        <th>{{data.quantity}}</th>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card">
+        <div class="header">
+            <h4 class="title">PE Quarterly Requests</h4>
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table table-hover table-striped">
+
+                <thead>
+                    <tr>
+                        <th>
+                            Product
+                        </th>
+
+                        <th>
+                            Quantity
+                        </th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for data in pe_products%}
+                    <tr>
+                        <th>{{data.master_product.name}}-{{data.master_product.language}}</th>
+                        <th>{{data.quantity}}</th>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card">
+        <div class="header">
+            <h4 class="title">Other Quarterly Requests</h4>
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table table-hover table-striped">
+
+                <thead>
+                    <tr>
+                        <th>
+                            Product
+                        </th>
+
+                        <th>
+                            Quantity
+                        </th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for data in other_products%}
+                    <tr>
+                        <th>{{data.master_product.name}}-{{data.master_product.language}}</th>
                         <th>{{data.quantity}}</th>
                     </tr>
                     {%endfor%}

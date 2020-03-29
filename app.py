@@ -159,6 +159,9 @@ def inventory():
     product_data = (sorted(top_productdata.items(),
                            key=lambda x: x[1], reverse=True))
     training_products= QuarterlyRequest.query.filter_by(team='training_team')
+    pse_products = QuarterlyRequest.query.filter_by(team='pse')
+    pe_products = QuarterlyRequest.query.filter_by(team='pe')
+    other_products = QuarterlyRequest.query.filter_by(team='other')
 
     return render_template("inventory.html", stock=stock, products=products, product_data=product_data, training_products=training_products)
 
